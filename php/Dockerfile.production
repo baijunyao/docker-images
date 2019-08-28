@@ -1,0 +1,3 @@
+FROM baijunyao/php
+
+RUN docker-php-ext-install gd pdo_mysql opcache
