@@ -1,6 +1,6 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:6.8.3
+FROM docker.elastic.co/elasticsearch/elasticsearch:7.4.1
 
-ENV VERSION=6.8.3
+ENV VERSION=7.4.1
 
 ADD https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v${VERSION}/elasticsearch-analysis-ik-$VERSION.zip /tmp/
 
