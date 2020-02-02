@@ -1,0 +1,26 @@
+name: Elasticsearch
+
+on: [push]
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          username: baijunyao
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - name: MySQL 8.0
+        run: |
+          docker build -f elasticsearch/7.4/Dockerfile -t baijunyao/elasticsearch:7.4 elasticsearch/7.4/
+          docker push baijunyao/elasticsearch:7.4
+      - name: Slack Notify
+        uses: baijunyao/action-slack-notify@v2.0.0
+        if: always()
+        with:
+          channel: CMRA2NF3L
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          github_context: ${{ toJson(github) }}
+          job_context: ${{ toJson(job) }}

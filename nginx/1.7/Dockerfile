@@ -1,4 +1,4 @@
-FROM nginx:mainline
+FROM nginx:1.7
 
 COPY conf/sources.list /etc/apt/sources.list
 COPY conf/nginx.conf /etc/nginx/nginx.conf
