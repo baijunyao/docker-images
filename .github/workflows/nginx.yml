@@ -12,7 +12,7 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - name: MySQL 8.0
+      - name: NGINX 1.7
         run: |
           docker build -f nginx/1.7/Dockerfile -t baijunyao/nginx:1.7 nginx/1.7/
           docker push baijunyao/nginx:1.7

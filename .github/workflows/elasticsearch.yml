@@ -12,7 +12,7 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - name: MySQL 8.0
+      - name: Elasticsearch 7.4
         run: |
           docker build -f elasticsearch/7.4/Dockerfile -t baijunyao/elasticsearch:7.4 elasticsearch/7.4/
           docker push baijunyao/elasticsearch:7.4

@@ -14,6 +14,21 @@ jobs:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
+      - name: PHP 7.2 base
+        run: |
+          docker build -f php/7.2/Dockerfile -t baijunyao/php:7.2 php/7.2/
+          docker push baijunyao/php:7.2
+
+      - name: PHP 7.2 local
+        run: |
+          docker build -f php/7.2/Dockerfile.local -t baijunyao/php:7.2-local php/7.2/
+          docker push baijunyao/php:7.2-local
+
+      - name: PHP 7.2 production
+        run: |
+          docker build -f php/7.2/Dockerfile.production -t baijunyao/php:7.2-production php/7.2/
+          docker push baijunyao/php:7.2-production
+
       - name: PHP 7.3 base
         run: |
           docker build -f php/7.3/Dockerfile -t baijunyao/php:7.3 php/7.3/
