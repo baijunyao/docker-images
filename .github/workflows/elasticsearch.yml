@@ -21,7 +21,7 @@ jobs:
           docker build -f elasticsearch/7.6/Dockerfile -t baijunyao/elasticsearch:7.6 elasticsearch/7.6/
           docker push baijunyao/elasticsearch:7.6
       - name: Slack Notify
-        uses: baijunyao/action-slack-notify@v2.0.0
+        uses: baijunyao/action-slack-notify@v2.2.0
         if: always()
         with:
           channel: CMRA2NF3L

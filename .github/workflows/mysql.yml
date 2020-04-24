@@ -17,7 +17,7 @@ jobs:
           docker build -f mysql/8.0/Dockerfile -t baijunyao/mysql:8.0 mysql/8.0/
           docker push baijunyao/mysql:8.0
       - name: Slack Notify
-        uses: baijunyao/action-slack-notify@v2.0.0
+        uses: baijunyao/action-slack-notify@v2.2.0
         if: always()
         with:
           channel: CMRA2NF3L

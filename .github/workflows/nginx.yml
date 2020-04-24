@@ -17,7 +17,7 @@ jobs:
           docker build -f nginx/1.7/Dockerfile -t baijunyao/nginx:1.7 nginx/1.7/
           docker push baijunyao/nginx:1.7
       - name: Slack Notify
-        uses: baijunyao/action-slack-notify@v2.0.0
+        uses: baijunyao/action-slack-notify@v2.2.0
         if: always()
         with:
           channel: CMRA2NF3L
