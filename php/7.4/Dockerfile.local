@@ -1,3 +1,6 @@
 FROM baijunyao/php:7.4
 
-RUN docker-php-ext-install pcntl
+RUN docker-php-ext-install pcntl \
+    && pecl install -o -f xdebug
+
+COPY conf/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
