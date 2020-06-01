@@ -60,10 +60,9 @@ jobs:
           docker push baijunyao/php:7.4-production
 
       - name: Slack Notify
-        uses: baijunyao/action-slack-notify@v2.2.0
+        uses: baijunyao/action-slack-notify@v3.0.0
         if: always()
         with:
-          channel: CMRA2NF3L
+          slack_channel_id: CMRA2NF3L
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           github_context: ${{ toJson(github) }}
-          job_context: ${{ toJson(job) }}
