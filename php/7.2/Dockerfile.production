@@ -1,3 +1,4 @@
 FROM baijunyao/php:7.2
 
-RUN docker-php-ext-install opcache
+RUN docker-php-ext-install opcache \
+    && cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
