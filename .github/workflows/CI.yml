@@ -41,10 +41,14 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - name: MySQL 8.0
+      - name: MySQL 8.0 local
         run: |
-          docker build -f mysql/8.0/Dockerfile -t baijunyao/mysql:8.0 mysql/8.0/
-          docker push baijunyao/mysql:8.0
+          docker build -f mysql/8.0/Dockerfile.local -t baijunyao/mysql:8.0-local mysql/8.0/
+          docker push baijunyao/mysql:8.0-local
+      - name: MySQL 8.0 production
+        run: |
+          docker build -f mysql/8.0/Dockerfile.production -t baijunyao/mysql:8.0-production mysql/8.0/
+          docker push baijunyao/mysql:8.0-production
   php:
     name: PHP
     runs-on: ubuntu-latest
