@@ -1,0 +1,148 @@
+name: AliyunContainerRegistry
+
+on: [push]
+
+jobs:
+  ubuntu:
+    name: Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: Ubuntu Bionic
+        run: |
+          docker build -f ubuntu/bionic/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/ubuntu:bionic ubuntu/bionic/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/ubuntu:bionic
+  mysql-client:
+    name: MySQL Client
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: MySQL Client
+        run: |
+          docker build -f mysql-client/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/mysql-client:1.0 mysql-client/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql-client:1.0
+  nginx:
+    name: NGINX
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: NGINX 1.7
+        run: |
+          docker build -f nginx/1.7/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/nginx:1.7 nginx/1.7/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/nginx:1.7
+  mysql:
+    name: MySQL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: MySQL 8.0 local
+        run: |
+          docker build -f mysql/8.0/Dockerfile.local -t registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-local mysql/8.0/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-local
+      - name: MySQL 8.0 production
+        run: |
+          docker build -f mysql/8.0/Dockerfile.production -t registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-production mysql/8.0/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-production
+  php:
+    name: PHP
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: PHP 7.2 base
+        run: |
+          docker build -f php/7.2/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2 php/7.2/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2
+      - name: PHP 7.2 local
+        run: |
+          docker build -f php/7.2/Dockerfile.local -t registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-local php/7.2/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-local
+      - name: PHP 7.2 production
+        run: |
+          docker build -f php/7.2/Dockerfile.production -t registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-production php/7.2/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-production
+      - name: PHP 7.3 base
+        run: |
+          docker build -f php/7.3/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3 php/7.3/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3
+      - name: PHP 7.3 local
+        run: |
+          docker build -f php/7.3/Dockerfile.local -t registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-local php/7.3/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-local
+      - name: PHP 7.3 production
+        run: |
+          docker build -f php/7.3/Dockerfile.production -t registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-production php/7.3/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-production
+      - name: PHP 7.4 base
+        run: |
+          docker build -f php/7.4/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4 php/7.4/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4
+      - name: PHP 7.4 local
+        run: |
+          docker build -f php/7.4/Dockerfile.local -t registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-local php/7.4/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-local
+      - name: PHP 7.4 production
+        run: |
+          docker build -f php/7.4/Dockerfile.production -t registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-production php/7.4/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-production
+  elasticsearch:
+    name: Elasticsearch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: Elasticsearch 7.4
+        run: |
+          docker build -f elasticsearch/7.4/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.4 elasticsearch/7.4/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.4
+      - name: Elasticsearch 7.6
+        run: |
+          docker build -f elasticsearch/7.6/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.6 elasticsearch/7.6/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.6
+  notify:
+    name: Slack Notify
+    runs-on: ubuntu-latest
+    needs: [ubuntu, mysql-client, nginx, mysql, php, elasticsearch]
+    if: always()
+    steps:
+      - name: Slack Notify
+        uses: baijunyao/action-slack-notify@v3.0.0
+        if: always()
+        with:
+          slack_channel_id: CMRA2NF3L
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          github_context: ${{ toJson(github) }}
