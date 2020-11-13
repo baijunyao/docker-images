@@ -45,6 +45,10 @@ jobs:
         run: |
           docker build -f nginx/1.7/Dockerfile -t baijunyao/nginx:1.7 nginx/1.7/
           docker push baijunyao/nginx:1.7
+      - name: NGINX 1.19
+        run: |
+          docker build -f nginx/1.19/Dockerfile -t baijunyao/nginx:1.19 nginx/1.19/
+          docker push baijunyao/nginx:1.19
   mysql:
     name: MySQL
     runs-on: ubuntu-latest
