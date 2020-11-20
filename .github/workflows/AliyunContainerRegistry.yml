@@ -71,6 +71,22 @@ jobs:
         run: |
           docker build -f mysql/8.0/Dockerfile.production -t registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-production mysql/8.0/
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-production
+      - name: MySQL 5.7 local
+        run: |
+          docker build -f mysql/5.7/Dockerfile.local -t registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-local mysql/5.7/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-local
+      - name: MySQL 5.7 production
+        run: |
+          docker build -f mysql/5.7/Dockerfile.production -t registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-production mysql/5.7/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-production
+      - name: MySQL 5.6 local
+        run: |
+          docker build -f mysql/5.6/Dockerfile.local -t registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-local mysql/5.6/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-local
+      - name: MySQL 5.6 production
+        run: |
+          docker build -f mysql/5.6/Dockerfile.production -t registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-production mysql/5.6/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-production
   php:
     name: PHP
     runs-on: ubuntu-latest
