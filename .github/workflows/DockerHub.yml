@@ -17,6 +17,20 @@ jobs:
         run: |
           docker build -f ubuntu/bionic/Dockerfile -t baijunyao/ubuntu:bionic ubuntu/bionic/
           docker push baijunyao/ubuntu:bionic
+  alpine:
+    name: Alpine
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          username: baijunyao
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - name: Alpine
+        run: |
+          docker build -f alpine/3.12/Dockerfile -t baijunyao/alpine:3.12 alpine/3.12/
+          docker push baijunyao/alpine:3.12
   mysql-client:
     name: MySQL Client
     runs-on: ubuntu-latest
