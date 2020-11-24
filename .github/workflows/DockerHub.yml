@@ -43,8 +43,8 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
       - name: MySQL Client
         run: |
-          docker build -f mysql-client/Dockerfile -t baijunyao/mysql-client:1.0 mysql-client/
-          docker push baijunyao/mysql-client:1.0
+          docker build -f mysql-client/1.1/Dockerfile -t baijunyao/mysql-client:1.1 mysql-client/1.1/
+          docker push baijunyao/mysql-client:1.1
   nginx:
     name: NGINX
     runs-on: ubuntu-latest

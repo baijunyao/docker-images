@@ -46,8 +46,8 @@ jobs:
           password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: MySQL Client
         run: |
-          docker build -f mysql-client/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/mysql-client:1.0 mysql-client/
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql-client:1.0
+          docker build -f mysql-client/1.1/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/mysql-client:1.1 mysql-client/1.1/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql-client:1.1
   nginx:
     name: NGINX
     runs-on: ubuntu-latest
