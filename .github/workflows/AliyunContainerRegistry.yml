@@ -149,6 +149,18 @@ jobs:
         run: |
           docker build -f php/7.4/Dockerfile.production -t registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-production php/7.4/
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-production
+      - name: PHP 8.0 base
+        run: |
+          docker build -f php/8.0/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0 php/8.0/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0
+      - name: PHP 8.0 local
+        run: |
+          docker build -f php/8.0/Dockerfile.local -t registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-local php/8.0/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-local
+      - name: PHP 8.0 production
+        run: |
+          docker build -f php/8.0/Dockerfile.production -t registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-production php/8.0/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-production
   elasticsearch:
     name: Elasticsearch
     runs-on: ubuntu-latest
