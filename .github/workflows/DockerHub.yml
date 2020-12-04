@@ -17,6 +17,10 @@ jobs:
         run: |
           docker build -f ubuntu/bionic/Dockerfile -t baijunyao/ubuntu:bionic ubuntu/bionic/
           docker push baijunyao/ubuntu:bionic
+      - name: Ubuntu Focal
+        run: |
+          docker build -f ubuntu/focal/Dockerfile -t baijunyao/ubuntu:focal ubuntu/focal/
+          docker push baijunyao/ubuntu:focal
   alpine:
     name: Alpine
     runs-on: ubuntu-latest
