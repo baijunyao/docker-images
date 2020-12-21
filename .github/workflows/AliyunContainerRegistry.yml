@@ -214,10 +214,25 @@ jobs:
         run: |
           docker build -f prometheus/2.23.0/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/prometheus:v2.23.0 prometheus/2.23.0/
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/prometheus:v2.23.0
+  grafana:
+    name: Grafana
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: Grafana 7.3.4
+        run: |
+          docker build -f grafana/7.3.4/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/grafana:7.3.4 grafana/7.3.4/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/grafana:7.3.4
   notify:
     name: Slack Notify
     runs-on: ubuntu-latest
-    needs: [ubuntu, mysql-client, nginx, mysql, php, elasticsearch, ossutil, prometheus]
+    needs: [ubuntu, alpine, mysql-client, nginx, mysql, php, elasticsearch, ossutil, prometheus, grafana]
     if: always()
     steps:
       - name: Slack Notify
