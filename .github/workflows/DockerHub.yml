@@ -21,6 +21,20 @@ jobs:
         run: |
           docker build -f ubuntu/focal/Dockerfile -t baijunyao/ubuntu:focal ubuntu/focal/
           docker push baijunyao/ubuntu:focal
+  busybox:
+    name: BusyBox
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          username: baijunyao
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - name: BusyBox 1.32
+        run: |
+          docker build -f busybox/1.32/Dockerfile -t baijunyao/busybox:1.32 busybox/1.32/
+          docker push baijunyao/busybox:1.32
   alpine:
     name: Alpine
     runs-on: ubuntu-latest
@@ -31,7 +45,7 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - name: Alpine
+      - name: Alpine 3.12
         run: |
           docker build -f alpine/3.12/Dockerfile -t baijunyao/alpine:3.12 alpine/3.12/
           docker push baijunyao/alpine:3.12
@@ -236,7 +250,7 @@ jobs:
   notify:
     name: Slack Notify
     runs-on: ubuntu-latest
-    needs: [ubuntu, alpine, mysql-client, nginx, mysql, php, redis, elasticsearch, ossutil, prometheus, grafana]
+    needs: [ubuntu, busybox, alpine, mysql-client, nginx, mysql, php, redis, elasticsearch, ossutil, prometheus, grafana]
     if: always()
     steps:
       - name: Slack Notify
