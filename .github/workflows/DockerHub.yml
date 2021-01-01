@@ -197,14 +197,18 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - name: Elasticsearch 7.4
+      - name: Elasticsearch 7.4.1
         run: |
-          docker build -f elasticsearch/7.4/Dockerfile -t baijunyao/elasticsearch:7.4 elasticsearch/7.4/
-          docker push baijunyao/elasticsearch:7.4
-      - name: Elasticsearch 7.6
+          docker build -f elasticsearch/7.4.1/Dockerfile -t baijunyao/elasticsearch:7.4.1 elasticsearch/7.4.1/
+          docker push baijunyao/elasticsearch:7.4.1
+      - name: Elasticsearch 7.6.2
         run: |
-          docker build -f elasticsearch/7.6/Dockerfile -t baijunyao/elasticsearch:7.6 elasticsearch/7.6/
-          docker push baijunyao/elasticsearch:7.6
+          docker build -f elasticsearch/7.6.2/Dockerfile -t baijunyao/elasticsearch:7.6.2 elasticsearch/7.6.2/
+          docker push baijunyao/elasticsearch:7.6.2
+      - name: Elasticsearch 7.10.1
+        run: |
+          docker build -f elasticsearch/7.10.1/Dockerfile -t baijunyao/elasticsearch:7.10.1 elasticsearch/7.10.1/
+          docker push baijunyao/elasticsearch:7.10.1
   ossutil:
     name: OSSUtil
     runs-on: ubuntu-latest

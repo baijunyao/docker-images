@@ -206,14 +206,18 @@ jobs:
           login-server: registry.cn-beijing.aliyuncs.com
           username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Elasticsearch 7.4
+      - name: Elasticsearch 7.4.1
         run: |
-          docker build -f elasticsearch/7.4/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.4 elasticsearch/7.4/
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.4
-      - name: Elasticsearch 7.6
+          docker build -f elasticsearch/7.4.1/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.4.1 elasticsearch/7.4.1/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.4.1
+      - name: Elasticsearch 7.6.2
         run: |
-          docker build -f elasticsearch/7.6/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.6 elasticsearch/7.6/
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.6
+          docker build -f elasticsearch/7.6.2/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.6.2 elasticsearch/7.6.2/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.6.2
+      - name: Elasticsearch 7.10.1
+        run: |
+            docker build -f elasticsearch/7.10.1/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.10.1 elasticsearch/7.10.1/
+            docker push registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.10.1
   ossutil:
     name: OSSUtil
     runs-on: ubuntu-latest
