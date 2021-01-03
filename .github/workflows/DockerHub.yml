@@ -209,6 +209,20 @@ jobs:
         run: |
           docker build -f elasticsearch/7.10.1/Dockerfile -t baijunyao/elasticsearch:7.10.1 elasticsearch/7.10.1/
           docker push baijunyao/elasticsearch:7.10.1
+  kibana:
+    name: Kibana
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          username: baijunyao
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - name: Kibana 7.10.1
+        run: |
+          docker build -f kibana/7.10.1/Dockerfile -t baijunyao/kibana:7.10.1 kibana/7.10.1/
+          docker push baijunyao/kibana:7.10.1
   ossutil:
     name: OSSUtil
     runs-on: ubuntu-latest
