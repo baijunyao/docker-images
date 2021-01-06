@@ -223,6 +223,20 @@ jobs:
         run: |
           docker build -f kibana/7.10.1/Dockerfile -t baijunyao/kibana:7.10.1 kibana/7.10.1/
           docker push baijunyao/kibana:7.10.1
+  fluentd:
+    name: Fluentd
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          username: baijunyao
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - name: Fluentd 1.11
+        run: |
+          docker build -f fluentd/1.11/Dockerfile -t baijunyao/fluentd:1.11 fluentd/1.11/
+          docker push baijunyao/fluentd:1.11
   ossutil:
     name: OSSUtil
     runs-on: ubuntu-latest

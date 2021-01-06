@@ -233,6 +233,21 @@ jobs:
         run: |
           docker build -f kibana/7.10.1/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/kibana:7.10.1 kibana/7.10.1/
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/kibana:7.10.1
+  fluentd:
+    name: Fluentd
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: Fluentd 1.11
+        run: |
+          docker build -f fluentd/1.11/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/fluentd:1.11 fluentd/1.11/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/fluentd:1.11
   ossutil:
     name: OSSUtil
     runs-on: ubuntu-latest
