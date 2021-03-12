@@ -278,6 +278,21 @@ jobs:
         run: |
           docker build -f prometheus/2.23.0/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/prometheus:v2.23.0 prometheus/2.23.0/
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/prometheus:v2.23.0
+  node_exporter:
+    name: Node exporter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: Node exporter v1.1.2
+        run: |
+          docker build -f node-exporter/1.1.2/Dockerfile -t registry.cn-beijing.aliyuncs.com/baijunyao/node-exporter:v1.1.2 node-exporter/1.1.2/
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/node-exporter:v1.1.2
   grafana:
     name: Grafana
     runs-on: ubuntu-latest
@@ -296,7 +311,7 @@ jobs:
   notify:
     name: Slack Notify
     runs-on: ubuntu-latest
-    needs: [ubuntu, busybox, alpine, mysql-client, nginx, mysql, php, redis, elasticsearch, ossutil, prometheus, grafana]
+    needs: [ubuntu, busybox, alpine, mysql-client, nginx, mysql, php, redis, elasticsearch, kibana, fluentd, ossutil, prometheus, node_exporter, grafana]
     if: always()
     steps:
       - name: Slack Notify
