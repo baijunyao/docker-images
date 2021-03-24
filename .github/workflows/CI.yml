@@ -1,4 +1,4 @@
-name: DockerHub
+name: CI
 
 on: [push]
 
@@ -13,14 +13,23 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: Ubuntu Bionic
         run: |
           docker build -f ubuntu/bionic/Dockerfile -t baijunyao/ubuntu:bionic ubuntu/bionic/
+          docker tag baijunyao/ubuntu:bionic registry.cn-beijing.aliyuncs.com/baijunyao/ubuntu:bionic
           docker push baijunyao/ubuntu:bionic
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/ubuntu:bionic
       - name: Ubuntu Focal
         run: |
           docker build -f ubuntu/focal/Dockerfile -t baijunyao/ubuntu:focal ubuntu/focal/
+          docker tag baijunyao/ubuntu:focal registry.cn-beijing.aliyuncs.com/baijunyao/ubuntu:focal
           docker push baijunyao/ubuntu:focal
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/ubuntu:focal
   busybox:
     name: BusyBox
     runs-on: ubuntu-latest
@@ -31,10 +40,17 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: BusyBox 1.32
         run: |
           docker build -f busybox/1.32/Dockerfile -t baijunyao/busybox:1.32 busybox/1.32/
+          docker tag baijunyao/busybox:1.32 registry.cn-beijing.aliyuncs.com/baijunyao/busybox:1.32
           docker push baijunyao/busybox:1.32
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/busybox:1.32
   alpine:
     name: Alpine
     runs-on: ubuntu-latest
@@ -45,10 +61,17 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: Alpine 3.12
         run: |
           docker build -f alpine/3.12/Dockerfile -t baijunyao/alpine:3.12 alpine/3.12/
+          docker tag baijunyao/alpine:3.12 registry.cn-beijing.aliyuncs.com/baijunyao/alpine:3.12
           docker push baijunyao/alpine:3.12
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/alpine:3.12
   mysql-client:
     name: MySQL Client
     runs-on: ubuntu-latest
@@ -59,10 +82,17 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: MySQL Client
         run: |
           docker build -f mysql-client/1.1/Dockerfile -t baijunyao/mysql-client:1.1 mysql-client/1.1/
+          docker tag baijunyao/mysql-client:1.1 registry.cn-beijing.aliyuncs.com/baijunyao/mysql-client:1.1
           docker push baijunyao/mysql-client:1.1
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql-client:1.1
   nginx:
     name: NGINX
     runs-on: ubuntu-latest
@@ -73,14 +103,23 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: NGINX 1.7
         run: |
           docker build -f nginx/1.7/Dockerfile -t baijunyao/nginx:1.7 nginx/1.7/
+          docker tag baijunyao/nginx:1.7 registry.cn-beijing.aliyuncs.com/baijunyao/nginx:1.7
           docker push baijunyao/nginx:1.7
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/nginx:1.7
       - name: NGINX 1.19
         run: |
           docker build -f nginx/1.19/Dockerfile -t baijunyao/nginx:1.19 nginx/1.19/
+          docker tag baijunyao/nginx:1.19 registry.cn-beijing.aliyuncs.com/baijunyao/nginx:1.19
           docker push baijunyao/nginx:1.19
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/nginx:1.19
   mysql:
     name: MySQL
     runs-on: ubuntu-latest
@@ -91,30 +130,47 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: MySQL 8.0 local
         run: |
           docker build -f mysql/8.0/Dockerfile.local -t baijunyao/mysql:8.0-local mysql/8.0/
+          docker tag baijunyao/mysql:8.0-local registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-local
           docker push baijunyao/mysql:8.0-local
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-local
       - name: MySQL 8.0 production
         run: |
           docker build -f mysql/8.0/Dockerfile.production -t baijunyao/mysql:8.0-production mysql/8.0/
+          docker tag baijunyao/mysql:8.0-production registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-production
           docker push baijunyao/mysql:8.0-production
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-production
       - name: MySQL 5.7 local
         run: |
           docker build -f mysql/5.7/Dockerfile.local -t baijunyao/mysql:5.7-local mysql/5.7/
+          docker tag baijunyao/mysql:5.7-local registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-local
           docker push baijunyao/mysql:5.7-local
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-local
       - name: MySQL 5.7 production
         run: |
           docker build -f mysql/5.7/Dockerfile.production -t baijunyao/mysql:5.7-production mysql/5.7/
+          docker tag baijunyao/mysql:5.7-production registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-production
           docker push baijunyao/mysql:5.7-production
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-production
       - name: MySQL 5.6 local
         run: |
           docker build -f mysql/5.6/Dockerfile.local -t baijunyao/mysql:5.6-local mysql/5.6/
+          docker tag baijunyao/mysql:5.6-local registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-local
           docker push baijunyao/mysql:5.6-local
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-local
       - name: MySQL 5.6 production
         run: |
           docker build -f mysql/5.6/Dockerfile.production -t baijunyao/mysql:5.6-production mysql/5.6/
+          docker tag baijunyao/mysql:5.6-production registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-production
           docker push baijunyao/mysql:5.6-production
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-production
   php:
     name: PHP
     runs-on: ubuntu-latest
@@ -125,54 +181,83 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: PHP 7.2 base
         run: |
           docker build -f php/7.2/Dockerfile -t baijunyao/php:7.2 php/7.2/
+          docker tag baijunyao/php:7.2 registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2
           docker push baijunyao/php:7.2
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2
       - name: PHP 7.2 local
         run: |
           docker build -f php/7.2/Dockerfile.local -t baijunyao/php:7.2-local php/7.2/
+          docker tag baijunyao/php:7.2-local registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-local
           docker push baijunyao/php:7.2-local
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-local
       - name: PHP 7.2 production
         run: |
           docker build -f php/7.2/Dockerfile.production -t baijunyao/php:7.2-production php/7.2/
+          docker tag baijunyao/php:7.2-production registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-production
           docker push baijunyao/php:7.2-production
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-production
       - name: PHP 7.3 base
         run: |
           docker build -f php/7.3/Dockerfile -t baijunyao/php:7.3 php/7.3/
+          docker tag baijunyao/php:7.3 registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3
           docker push baijunyao/php:7.3
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3
       - name: PHP 7.3 local
         run: |
           docker build -f php/7.3/Dockerfile.local -t baijunyao/php:7.3-local php/7.3/
+          docker tag baijunyao/php:7.3-local registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-local
           docker push baijunyao/php:7.3-local
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-local
       - name: PHP 7.3 production
         run: |
           docker build -f php/7.3/Dockerfile.production -t baijunyao/php:7.3-production php/7.3/
+          docker tag baijunyao/php:7.3-production registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-production
           docker push baijunyao/php:7.3-production
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-production
       - name: PHP 7.4 base
         run: |
           docker build -f php/7.4/Dockerfile -t baijunyao/php:7.4 php/7.4/
+          docker tag baijunyao/php:7.4 registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4
           docker push baijunyao/php:7.4
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4
       - name: PHP 7.4 local
         run: |
           docker build -f php/7.4/Dockerfile.local -t baijunyao/php:7.4-local php/7.4/
+          docker tag baijunyao/php:7.4-local registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-local
           docker push baijunyao/php:7.4-local
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-local
       - name: PHP 7.4 production
         run: |
           docker build -f php/7.4/Dockerfile.production -t baijunyao/php:7.4-production php/7.4/
+          docker tag baijunyao/php:7.4-production registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-production
           docker push baijunyao/php:7.4-production
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-production
       - name: PHP 8.0 base
         run: |
           docker build -f php/8.0/Dockerfile -t baijunyao/php:8.0 php/8.0/
+          docker tag baijunyao/php:8.0 registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0
           docker push baijunyao/php:8.0
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0
       - name: PHP 8.0 local
         run: |
           docker build -f php/8.0/Dockerfile.local -t baijunyao/php:8.0-local php/8.0/
+          docker tag baijunyao/php:8.0-local registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-local
           docker push baijunyao/php:8.0-local
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-local
       - name: PHP 8.0 production
         run: |
           docker build -f php/8.0/Dockerfile.production -t baijunyao/php:8.0-production php/8.0/
+          docker tag baijunyao/php:8.0-production registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-production
           docker push baijunyao/php:8.0-production
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-production
   redis:
     name: Redis
     runs-on: ubuntu-latest
@@ -183,10 +268,17 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: Redis 6.0
         run: |
           docker build -f redis/6.0/Dockerfile -t baijunyao/redis:6.0 redis/6.0/
+          docker tag baijunyao/redis:6.0 registry.cn-beijing.aliyuncs.com/baijunyao/redis:6.0
           docker push baijunyao/redis:6.0
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/redis:6.0
   elasticsearch:
     name: Elasticsearch
     runs-on: ubuntu-latest
@@ -197,18 +289,29 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: Elasticsearch 7.4.1
         run: |
           docker build -f elasticsearch/7.4.1/Dockerfile -t baijunyao/elasticsearch:7.4.1 elasticsearch/7.4.1/
+          docker tag baijunyao/elasticsearch:7.4.1 registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.4.1
           docker push baijunyao/elasticsearch:7.4.1
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.4.1
       - name: Elasticsearch 7.6.2
         run: |
           docker build -f elasticsearch/7.6.2/Dockerfile -t baijunyao/elasticsearch:7.6.2 elasticsearch/7.6.2/
+          docker tag baijunyao/elasticsearch:7.6.2 registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.6.2
           docker push baijunyao/elasticsearch:7.6.2
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.6.2
       - name: Elasticsearch 7.10.1
         run: |
           docker build -f elasticsearch/7.10.1/Dockerfile -t baijunyao/elasticsearch:7.10.1 elasticsearch/7.10.1/
+          docker tag baijunyao/elasticsearch:7.10.1 registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.10.1
           docker push baijunyao/elasticsearch:7.10.1
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:7.10.1
   kibana:
     name: Kibana
     runs-on: ubuntu-latest
@@ -219,10 +322,17 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: Kibana 7.10.1
         run: |
           docker build -f kibana/7.10.1/Dockerfile -t baijunyao/kibana:7.10.1 kibana/7.10.1/
+          docker tag baijunyao/kibana:7.10.1 registry.cn-beijing.aliyuncs.com/baijunyao/kibana:7.10.1
           docker push baijunyao/kibana:7.10.1
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/kibana:7.10.1
   fluentd:
     name: Fluentd
     runs-on: ubuntu-latest
@@ -233,10 +343,17 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: Fluentd 1.11
         run: |
           docker build -f fluentd/1.11/Dockerfile -t baijunyao/fluentd:1.11 fluentd/1.11/
+          docker tag baijunyao/fluentd:1.11 registry.cn-beijing.aliyuncs.com/baijunyao/fluentd:1.11
           docker push baijunyao/fluentd:1.11
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/fluentd:1.11
   ossutil:
     name: OSSUtil
     runs-on: ubuntu-latest
@@ -247,10 +364,17 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: OSSUTIL 1.7.0
         run: |
           docker build -f ossutil/1.7.0/Dockerfile -t baijunyao/ossutil:1.7.0 ossutil/1.7.0/
+          docker tag baijunyao/ossutil:1.7.0 registry.cn-beijing.aliyuncs.com/baijunyao/ossutil:1.7.0
           docker push baijunyao/ossutil:1.7.0
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/ossutil:1.7.0
   prometheus:
     name: Prometheus
     runs-on: ubuntu-latest
@@ -261,10 +385,17 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: Prometheus v2.23.0
         run: |
           docker build -f prometheus/2.23.0/Dockerfile -t baijunyao/prometheus:v2.23.0 prometheus/2.23.0/
+          docker tag baijunyao/prometheus:v2.23.0 registry.cn-beijing.aliyuncs.com/baijunyao/prometheus:v2.23.0
           docker push baijunyao/prometheus:v2.23.0
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/prometheus:v2.23.0
   node_exporter:
     name: Node exporter
     runs-on: ubuntu-latest
@@ -275,10 +406,17 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: Node exporter v1.1.2
         run: |
           docker build -f node-exporter/1.1.2/Dockerfile -t baijunyao/node-exporter:v1.1.2 node-exporter/1.1.2/
+          docker tag baijunyao/node-exporter:v1.1.2 registry.cn-beijing.aliyuncs.com/baijunyao/node-exporter:v1.1.2
           docker push baijunyao/node-exporter:v1.1.2
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/node-exporter:v1.1.2
   grafana:
     name: Grafana
     runs-on: ubuntu-latest
@@ -289,10 +427,17 @@ jobs:
         with:
           username: baijunyao
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: Grafana 7.3.4
         run: |
           docker build -f grafana/7.3.4/Dockerfile -t baijunyao/grafana:7.3.4 grafana/7.3.4/
+          docker tag baijunyao/grafana:7.3.4 registry.cn-beijing.aliyuncs.com/baijunyao/grafana:7.3.4
           docker push baijunyao/grafana:7.3.4
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/grafana:7.3.4
   notify:
     name: Slack Notify
     runs-on: ubuntu-latest
