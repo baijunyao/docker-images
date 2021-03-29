@@ -11,6 +11,7 @@ RUN set -xe \
         libjpeg62-turbo-dev \
         libpng-dev \
         libzip-dev \
+        unzip \
     && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install gd pdo_mysql zip exif \
     && pecl install -o -f redis-5.0.2 \
