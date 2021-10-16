@@ -1,7 +1,5 @@
 FROM php:7.3-fpm
 
-COPY conf/sources.list /etc/apt/sources.list
-
 ADD https://mirrors.aliyun.com/composer/composer.phar /usr/local/bin/composer
 
 RUN set -xe \
