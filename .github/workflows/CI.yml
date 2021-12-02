@@ -377,6 +377,40 @@ jobs:
           docker push baijunyao/php:8.0-production
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-production
 
+  php_8_1:
+    name: PHP 8.1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          username: baijunyao
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: PHP 8.1 base
+        run: |
+          docker build -f php/8.1/Dockerfile -t baijunyao/php:8.1 php/8.1/
+          docker tag baijunyao/php:8.1 registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1
+          docker push baijunyao/php:8.1
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1
+      - name: PHP 8.1 local
+        run: |
+          docker build -f php/8.1/Dockerfile.local -t baijunyao/php:8.1-local php/8.1/
+          docker tag baijunyao/php:8.1-local registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1-local
+          docker push baijunyao/php:8.1-local
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1-local
+      - name: PHP 8.1 production
+        run: |
+          docker build -f php/8.1/Dockerfile.production -t baijunyao/php:8.1-production php/8.1/
+          docker tag baijunyao/php:8.1-production registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1-production
+          docker push baijunyao/php:8.1-production
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1-production
+
   redis:
     name: Redis
     runs-on: ubuntu-latest
