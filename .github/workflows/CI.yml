@@ -634,7 +634,7 @@ jobs:
   notify:
     name: Slack Notify
     runs-on: ubuntu-latest
-    needs: [ubuntu_bionic, ubuntu_focal, busybox, alpine, mysql-client, nginx_1_7, nginx_1_19, mysql_8_0, mysql_5_7, mysql_5_6, php_7_2, php_7_3, php_7_4, php_8_0, redis, elasticsearch_7_4_1, elasticsearch_7_6_2, elasticsearch_7_10_1, kibana, fluentd, ossutil, prometheus, node_exporter, grafana]
+    needs: [ubuntu_bionic, ubuntu_focal, busybox, alpine, mysql-client, nginx_1_7, nginx_1_19, mysql_8_0, mysql_5_7, mysql_5_6, php_7_2, php_7_3, php_7_4, php_8_0, php_8_1, redis, elasticsearch_7_4_1, elasticsearch_7_6_2, elasticsearch_7_10_1, kibana, fluentd, ossutil, prometheus, node_exporter, grafana]
     if: always()
     steps:
       - name: Slack Notify
