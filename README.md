@@ -1,7 +1,7 @@
 # Docker Images
 Some Dockerfile
 
-# PHP 7.2、7.3、7.4
+# PHP 7.2、7.3、7.4、8.0、8.1
 DockerHub: https://hub.docker.com/r/baijunyao/php
 ## Base
 Feature
@@ -13,6 +13,8 @@ Pull image
 docker pull baijunyao/php:7.2
 docker pull baijunyao/php:7.3
 docker pull baijunyao/php:7.4
+docker pull baijunyao/php:8.0
+docker pull baijunyao/php:8.1
 ```
 
 ## Local
@@ -26,6 +28,8 @@ Pull image
 docker pull baijunyao/php:7.2-local
 docker pull baijunyao/php:7.3-local
 docker pull baijunyao/php:7.4-local
+docker pull baijunyao/php:8.0-local
+docker pull baijunyao/php:8.1-local
 ```
 
 ## Production
@@ -39,6 +43,8 @@ Pull image
 docker pull baijunyao/php:7.2-production
 docker pull baijunyao/php:7.3-production
 docker pull baijunyao/php:7.4-production
+docker pull baijunyao/php:8.0-production
+docker pull baijunyao/php:8.1-production
 ```
 
 # MySQL 8.0
