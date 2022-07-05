@@ -411,6 +411,28 @@ jobs:
           docker push baijunyao/php:8.1-production
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1-production
 
+  php_nginx:
+    name: PHP with NGINX
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          username: baijunyao
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: PHP with NGINX
+        run: |
+          docker build -f php-nginx/Dockerfile -t baijunyao/php-nginx php-nginx/
+          docker tag baijunyao/php-nginx registry.cn-beijing.aliyuncs.com/baijunyao/php-nginx
+          docker push baijunyao/php-nginx
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php-nginx
+
   redis:
     name: Redis
     runs-on: ubuntu-latest
@@ -634,7 +656,7 @@ jobs:
   notify:
     name: Slack Notify
     runs-on: ubuntu-latest
-    needs: [ubuntu_bionic, ubuntu_focal, busybox, alpine, mysql-client, nginx_1_7, nginx_1_19, mysql_8_0, mysql_5_7, mysql_5_6, php_7_2, php_7_3, php_7_4, php_8_0, php_8_1, redis, elasticsearch_7_4_1, elasticsearch_7_6_2, elasticsearch_7_10_1, kibana, fluentd, ossutil, prometheus, node_exporter, grafana]
+    needs: [ubuntu_bionic, ubuntu_focal, busybox, alpine, mysql-client, nginx_1_7, nginx_1_19, mysql_8_0, mysql_5_7, mysql_5_6, php_7_2, php_7_3, php_7_4, php_8_0, php_8_1, php_nginx, redis, elasticsearch_7_4_1, elasticsearch_7_6_2, elasticsearch_7_10_1, kibana, fluentd, ossutil, prometheus, node_exporter, grafana]
     if: always()
     steps:
       - name: Slack Notify
