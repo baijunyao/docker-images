@@ -1,4 +1,4 @@
-FROM baijunyao/php:7.4
+FROM baijunyao/php:${PHP_VERSION}-${PHP_MOD}
 
 RUN docker-php-ext-install opcache \
     && cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \

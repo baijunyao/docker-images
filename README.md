@@ -3,19 +3,6 @@ Some Dockerfile
 
 # PHP 7.2、7.3、7.4、8.0、8.1
 DockerHub: https://hub.docker.com/r/baijunyao/php
-## Base
-Feature
-- Install Composer
-- Install redis, gd, pdo_mysql, zip and exif extensions
-
-Pull image
-```bash
-docker pull baijunyao/php:7.2
-docker pull baijunyao/php:7.3
-docker pull baijunyao/php:7.4
-docker pull baijunyao/php:8.0
-docker pull baijunyao/php:8.1
-```
 
 ## Local
 Feature
@@ -23,13 +10,22 @@ Feature
 - Install xdebug extensions
 - Add `post_max_size=20M` and `upload_max_filesize=20M` to php.ini
 
-Pull image
+Pull PHP FPM image
 ```bash
-docker pull baijunyao/php:7.2-local
-docker pull baijunyao/php:7.3-local
-docker pull baijunyao/php:7.4-local
-docker pull baijunyao/php:8.0-local
-docker pull baijunyao/php:8.1-local
+docker pull baijunyao/php:7.2-fpm-local
+docker pull baijunyao/php:7.3-fpm-local
+docker pull baijunyao/php:7.4-fpm-local
+docker pull baijunyao/php:8.0-fpm-local
+docker pull baijunyao/php:8.1-fpm-local
+```
+
+Pull PHP CLI image
+```bash
+docker pull baijunyao/php:7.2-cli-local
+docker pull baijunyao/php:7.3-cli-local
+docker pull baijunyao/php:7.4-cli-local
+docker pull baijunyao/php:8.0-cli-local
+docker pull baijunyao/php:8.1-cli-local
 ```
 
 ## Production
@@ -38,13 +34,22 @@ Feature
 - Install opcache extensions
 - Add `post_max_size=20M` and `upload_max_filesize=20M` to php.ini
 
-Pull image
+Pull PHP FPM image
 ```bash
-docker pull baijunyao/php:7.2-production
-docker pull baijunyao/php:7.3-production
-docker pull baijunyao/php:7.4-production
-docker pull baijunyao/php:8.0-production
-docker pull baijunyao/php:8.1-production
+docker pull baijunyao/php:7.2-fpm-production
+docker pull baijunyao/php:7.3-fpm-production
+docker pull baijunyao/php:7.4-fpm-production
+docker pull baijunyao/php:8.0-fpm-production
+docker pull baijunyao/php:8.1-fpm-production
+```
+
+Pull PHP CLI image
+```bash
+docker pull baijunyao/php:7.2-cli-production
+docker pull baijunyao/php:7.3-cli-production
+docker pull baijunyao/php:7.4-cli-production
+docker pull baijunyao/php:8.0-cli-production
+docker pull baijunyao/php:8.1-cli-production
 ```
 
 # MySQL 8.0

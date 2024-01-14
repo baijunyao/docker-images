@@ -1,4 +1,7 @@
-FROM baijunyao/php:7.4
+ARG PHP_VERSION=7.2
+ARG PHP_MOD=fpm
+
+FROM baijunyao/php:${PHP_VERSION}-${PHP_MOD}
 
 RUN docker-php-ext-install pcntl \
     && pecl install -o -f xdebug-2.9.8 \

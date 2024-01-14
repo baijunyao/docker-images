@@ -1,5 +1,0 @@
-FROM baijunyao/php:8.1
-
-RUN docker-php-ext-install opcache \
-    && cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
-    && printf '%s\n' 'post_max_size=20M' 'upload_max_filesize=20M' 'max_input_vars=10000' >> /usr/local/etc/php/php.ini

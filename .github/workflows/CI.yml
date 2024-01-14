@@ -241,8 +241,11 @@ jobs:
           docker push baijunyao/mysql:5.6-production
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-production
 
-  php_7_2:
-    name: PHP 7.2
+  php:
+    strategy:
+      matrix:
+        version: [ "7.2", "7.3", "7.4", "8.0", "8.1", "8.2", "8.3" ]
+        mod: [ fpm, cli ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -256,160 +259,18 @@ jobs:
           login-server: registry.cn-beijing.aliyuncs.com
           username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: PHP 7.2 base
+      - name: PHP ${{ matrix.version }}-${{ matrix.mod }} local
         run: |
-          docker build -f php/7.2/Dockerfile -t baijunyao/php:7.2 php/7.2/
-          docker tag baijunyao/php:7.2 registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2
-          docker push baijunyao/php:7.2
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2
-      - name: PHP 7.2 local
+          docker build -f php/Dockerfile -t baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-local php/ --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --target local
+          docker tag baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-local registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-local
+          docker push baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-local
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-local
+      - name: PHP ${{ matrix.version }}-${{ matrix.mod }} production
         run: |
-          docker build -f php/7.2/Dockerfile.local -t baijunyao/php:7.2-local php/7.2/
-          docker tag baijunyao/php:7.2-local registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-local
-          docker push baijunyao/php:7.2-local
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-local
-      - name: PHP 7.2 production
-        run: |
-          docker build -f php/7.2/Dockerfile.production -t baijunyao/php:7.2-production php/7.2/
-          docker tag baijunyao/php:7.2-production registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-production
-          docker push baijunyao/php:7.2-production
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.2-production
-
-  php_7_3:
-    name: PHP 7.3
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
-        with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: PHP 7.3 base
-        run: |
-          docker build -f php/7.3/Dockerfile -t baijunyao/php:7.3 php/7.3/
-          docker tag baijunyao/php:7.3 registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3
-          docker push baijunyao/php:7.3
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3
-      - name: PHP 7.3 local
-        run: |
-          docker build -f php/7.3/Dockerfile.local -t baijunyao/php:7.3-local php/7.3/
-          docker tag baijunyao/php:7.3-local registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-local
-          docker push baijunyao/php:7.3-local
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-local
-      - name: PHP 7.3 production
-        run: |
-          docker build -f php/7.3/Dockerfile.production -t baijunyao/php:7.3-production php/7.3/
-          docker tag baijunyao/php:7.3-production registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-production
-          docker push baijunyao/php:7.3-production
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.3-production
-
-  php_7_4:
-    name: PHP 7.4
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
-        with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: PHP 7.4 base
-        run: |
-          docker build -f php/7.4/Dockerfile -t baijunyao/php:7.4 php/7.4/
-          docker tag baijunyao/php:7.4 registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4
-          docker push baijunyao/php:7.4
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4
-      - name: PHP 7.4 local
-        run: |
-          docker build -f php/7.4/Dockerfile.local -t baijunyao/php:7.4-local php/7.4/
-          docker tag baijunyao/php:7.4-local registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-local
-          docker push baijunyao/php:7.4-local
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-local
-      - name: PHP 7.4 production
-        run: |
-          docker build -f php/7.4/Dockerfile.production -t baijunyao/php:7.4-production php/7.4/
-          docker tag baijunyao/php:7.4-production registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-production
-          docker push baijunyao/php:7.4-production
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:7.4-production
-
-  php_8_0:
-    name: PHP 8.0
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
-        with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: PHP 8.0 base
-        run: |
-          docker build -f php/8.0/Dockerfile -t baijunyao/php:8.0 php/8.0/
-          docker tag baijunyao/php:8.0 registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0
-          docker push baijunyao/php:8.0
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0
-      - name: PHP 8.0 local
-        run: |
-          docker build -f php/8.0/Dockerfile.local -t baijunyao/php:8.0-local php/8.0/
-          docker tag baijunyao/php:8.0-local registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-local
-          docker push baijunyao/php:8.0-local
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-local
-      - name: PHP 8.0 production
-        run: |
-          docker build -f php/8.0/Dockerfile.production -t baijunyao/php:8.0-production php/8.0/
-          docker tag baijunyao/php:8.0-production registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-production
-          docker push baijunyao/php:8.0-production
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.0-production
-
-  php_8_1:
-    name: PHP 8.1
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
-        with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: PHP 8.1 base
-        run: |
-          docker build -f php/8.1/Dockerfile -t baijunyao/php:8.1 php/8.1/
-          docker tag baijunyao/php:8.1 registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1
-          docker push baijunyao/php:8.1
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1
-      - name: PHP 8.1 local
-        run: |
-          docker build -f php/8.1/Dockerfile.local -t baijunyao/php:8.1-local php/8.1/
-          docker tag baijunyao/php:8.1-local registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1-local
-          docker push baijunyao/php:8.1-local
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1-local
-      - name: PHP 8.1 production
-        run: |
-          docker build -f php/8.1/Dockerfile.production -t baijunyao/php:8.1-production php/8.1/
-          docker tag baijunyao/php:8.1-production registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1-production
-          docker push baijunyao/php:8.1-production
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1-production
+          docker build -f php/Dockerfile -t baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-production php/ --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --target production
+          docker tag baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-production registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-production
+          docker push baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-production
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-production
 
   php_nginx:
     name: PHP with NGINX
@@ -656,7 +517,7 @@ jobs:
   notify:
     name: Slack Notify
     runs-on: ubuntu-latest
-    needs: [ubuntu_bionic, ubuntu_focal, busybox, alpine, mysql-client, nginx_1_7, nginx_1_19, mysql_8_0, mysql_5_7, mysql_5_6, php_7_2, php_7_3, php_7_4, php_8_0, php_8_1, php_nginx, redis, elasticsearch_7_4_1, elasticsearch_7_6_2, elasticsearch_7_10_1, kibana, fluentd, ossutil, prometheus, node_exporter, grafana]
+    needs: [ubuntu_bionic, ubuntu_focal, busybox, alpine, mysql-client, nginx_1_7, nginx_1_19, mysql_8_0, mysql_5_7, mysql_5_6, php, php_nginx, redis, elasticsearch_7_4_1, elasticsearch_7_6_2, elasticsearch_7_10_1, kibana, fluentd, ossutil, prometheus, node_exporter, grafana]
     if: always()
     steps:
       - name: Slack Notify
