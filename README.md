@@ -1,7 +1,7 @@
 # Docker Images
 Some Dockerfile
 
-# PHP 7.2、7.3、7.4、8.0、8.1
+# PHP 7.1、7.2、7.3、7.4、8.0、8.1、8.2、8.3
 DockerHub: https://hub.docker.com/r/baijunyao/php
 
 ## Local
@@ -12,6 +12,7 @@ Feature
 
 Pull PHP FPM image
 ```bash
+docker pull baijunyao/php:7.1-fpm-local
 docker pull baijunyao/php:7.2-fpm-local
 docker pull baijunyao/php:7.3-fpm-local
 docker pull baijunyao/php:7.4-fpm-local
@@ -21,6 +22,7 @@ docker pull baijunyao/php:8.1-fpm-local
 
 Pull PHP CLI image
 ```bash
+docker pull baijunyao/php:7.1-cli-local
 docker pull baijunyao/php:7.2-cli-local
 docker pull baijunyao/php:7.3-cli-local
 docker pull baijunyao/php:7.4-cli-local
@@ -36,6 +38,7 @@ Feature
 
 Pull PHP FPM image
 ```bash
+docker pull baijunyao/php:7.1-fpm-production
 docker pull baijunyao/php:7.2-fpm-production
 docker pull baijunyao/php:7.3-fpm-production
 docker pull baijunyao/php:7.4-fpm-production
@@ -45,6 +48,7 @@ docker pull baijunyao/php:8.1-fpm-production
 
 Pull PHP CLI image
 ```bash
+docker pull baijunyao/php:7.1-cli-production
 docker pull baijunyao/php:7.2-cli-production
 docker pull baijunyao/php:7.3-cli-production
 docker pull baijunyao/php:7.4-cli-production
