@@ -472,10 +472,30 @@ jobs:
           docker push baijunyao/grafana:7.3.4
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/grafana:7.3.4
 
+  cert_manager:
+    strategy:
+      matrix:
+        version: [ "1.10.2" ]
+        repository: [ "cert-manager-controller", "cert-manager-webhook", "cert-manager-cainjector", "cert-manager-acmesolver", "cert-manager-ctl" ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: ${{ matrix.repository }}-v${{ matrix.version }}
+        run: |
+          docker pull quay.io/jetstack/${{ matrix.repository }}:v${{ matrix.version }}
+          docker tag quay.io/jetstack/${{ matrix.repository }}:v${{ matrix.version }} registry.cn-beijing.aliyuncs.com/baijunyao/${{ matrix.repository }}:v${{ matrix.version }}
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/${{ matrix.repository }}:v${{ matrix.version }}
+
   notify:
     name: Slack Notify
     runs-on: ubuntu-latest
-    needs: [ubuntu_bionic, ubuntu_focal, busybox, alpine, mysql-client, nginx_1_7, nginx_1_19, mysql_8_0, mysql_5_7, mysql_5_6, php, php_nginx, redis, elasticsearch, kibana, fluentd, ossutil, prometheus, node_exporter, grafana]
+    needs: [ubuntu_bionic, ubuntu_focal, busybox, alpine, mysql-client, nginx_1_7, nginx_1_19, mysql_8_0, mysql_5_7, mysql_5_6, php, php_nginx, redis, elasticsearch, kibana, fluentd, ossutil, prometheus, node_exporter, grafana, cert_manager]
     if: always()
     steps:
       - name: Slack Notify
