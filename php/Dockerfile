@@ -28,7 +28,7 @@ RUN set -xe \
     && case "${PHP_MAJOR_VERSION}" in \
         7.1) pecl install -o -f redis-5.3.7 ;; \
         7.2|7.3) pecl install -o -f redis-6.0.2 ;; \
-        7.4|8.0|8.1|8.2|8.3) pecl install -o -f redis-6.2.0 ;; \
+        7.4|8.0|8.1|8.2|8.3|8.4) pecl install -o -f redis-6.2.0 ;; \
         *) echo "Unsupported PHP version (${PHP_MAJOR_VERSION}) for redis extension" && exit 1 ;; \
        esac \
     && docker-php-ext-enable redis \
@@ -51,7 +51,7 @@ RUN docker-php-ext-install pcntl \
     && case "${PHP_MAJOR_VERSION}" in \
         7.1|7.2) pecl install -o -f xdebug-2.9.8 ;; \
         7.3|7.4) pecl install -o -f xdebug-3.1.6 ;; \
-        8.0|8.1|8.2|8.3) pecl install -o -f xdebug-3.4.2 ;; \
+        8.0|8.1|8.2|8.3|8.4) pecl install -o -f xdebug-3.4.2 ;; \
         *) echo "Unsupported PHP version (${PHP_MAJOR_VERSION}) for xdebug extension" && exit 1 ;; \
        esac \
     && cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
