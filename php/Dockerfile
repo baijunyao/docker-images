@@ -7,6 +7,14 @@ FROM php:${PHP_MAJOR_VERSION}-${PHP_MOD} AS base
 ARG PHP_MAJOR_VERSION=7.1
 ARG PHP_MOD=fpm
 
+# Fix for Debian Buster archive repositories
+RUN if [ "${PHP_MAJOR_VERSION}" = "7.1" ] || [ "${PHP_MAJOR_VERSION}" = "7.2" ]; then \
+        sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list && \
+        sed -i 's/security.debian.org/archive.debian.org/g' /etc/apt/sources.list && \
+        sed -i '/stretch-updates/d' /etc/apt/sources.list && \
+        sed -i '/buster-updates/d' /etc/apt/sources.list; \
+    fi
+
 RUN set -xe \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
