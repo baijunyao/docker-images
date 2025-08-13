@@ -63,16 +63,15 @@ Pull image
 docker pull baijunyao/mysql-client:1.0
 ```
 
-# NGINX 1.7
+# NGINX 1.7、1.19、1.29
 DockerHub: https://hub.docker.com/r/baijunyao/nginx
 
 Feature
-- Add [nginx.conf](./nginx/1.7/conf/nginx.conf)
 - Remove /etc/nginx/conf.d/default.conf
 
 Pull image
 ```bash
-docker pull baijunyao/nginx:1.7
+docker pull baijunyao/nginx:1.29
 ```
 
 # Elasticsearch 7.4、7.6

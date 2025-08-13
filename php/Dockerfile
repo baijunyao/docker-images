@@ -1,10 +1,10 @@
-ARG PHP_MAJOR_VERSION=7.1
+ARG PHP_MAJOR_VERSION=7.3
 ARG PHP_MOD=fpm
 
 FROM php:${PHP_MAJOR_VERSION}-${PHP_MOD} AS base
 
 # Due to scope issues, it is necessary to redefine here. https://docs.docker.com/engine/reference/builder/#scope
-ARG PHP_MAJOR_VERSION=7.1
+ARG PHP_MAJOR_VERSION=7.3
 ARG PHP_MOD=fpm
 
 RUN set -xe \
@@ -16,7 +16,7 @@ RUN set -xe \
         libicu-dev \
         libzip-dev \
         unzip \
-    && if [ "${PHP_MAJOR_VERSION}" = "7.1" ] || [ "${PHP_MAJOR_VERSION}" = "7.2" ] || [ "${PHP_MAJOR_VERSION}" = "7.3" ]; then \
+    && if [ "${PHP_MAJOR_VERSION}" = "7.3" ]; then \
         docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/; \
     else \
         # https://github.com/docker-library/php/issues/912#issuecomment-559918036  \
@@ -26,8 +26,7 @@ RUN set -xe \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl gd pdo_mysql zip exif \
     && case "${PHP_MAJOR_VERSION}" in \
-        7.1) pecl install -o -f redis-5.3.7 ;; \
-        7.2|7.3) pecl install -o -f redis-6.0.2 ;; \
+        7.3) pecl install -o -f redis-6.0.2 ;; \
         7.4|8.0|8.1|8.2|8.3|8.4) pecl install -o -f redis-6.2.0 ;; \
         *) echo "Unsupported PHP version (${PHP_MAJOR_VERSION}) for redis extension" && exit 1 ;; \
        esac \
@@ -44,12 +43,11 @@ WORKDIR /app
 FROM base AS local
 
 # Due to scope issues, it is necessary to redefine here. https://docs.docker.com/engine/reference/builder/#scope
-ARG PHP_MAJOR_VERSION=7.1
+ARG PHP_MAJOR_VERSION=7.3
 ARG PHP_MOD=fpm
 
 RUN docker-php-ext-install pcntl \
     && case "${PHP_MAJOR_VERSION}" in \
-        7.1|7.2) pecl install -o -f xdebug-2.9.8 ;; \
         7.3|7.4) pecl install -o -f xdebug-3.1.6 ;; \
         8.0|8.1|8.2|8.3|8.4) pecl install -o -f xdebug-3.4.2 ;; \
         *) echo "Unsupported PHP version (${PHP_MAJOR_VERSION}) for xdebug extension" && exit 1 ;; \
@@ -63,7 +61,7 @@ COPY conf/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xde
 FROM base AS production
 
 # Due to scope issues, it is necessary to redefine here. https://docs.docker.com/engine/reference/builder/#scope
-ARG PHP_MAJOR_VERSION=7.1
+ARG PHP_MAJOR_VERSION=7.3
 ARG PHP_MOD=fpm
 
 RUN docker-php-ext-install opcache \
