@@ -20,7 +20,7 @@ RUN set -xe \
         docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/; \
     else \
         # https://github.com/docker-library/php/issues/912#issuecomment-559918036  \
-        # https://github.com/php/php-src/blob/PHP-7.4/UPGRADING#L755-L764
+        # https://github.com/php/php-src/blob/PHP-7.4/UPGRADING#L755-L764 \
         docker-php-ext-configure gd --with-freetype --with-jpeg; \
     fi \
     && docker-php-ext-configure intl \
@@ -53,10 +53,10 @@ RUN docker-php-ext-install pcntl \
         *) echo "Unsupported PHP version (${PHP_MAJOR_VERSION}) for xdebug extension" && exit 1 ;; \
        esac \
     && cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
-    && printf '%s\n' 'post_max_size=20M' 'upload_max_filesize=20M' 'max_input_vars=10000' 'max_execution_time=300' >> /usr/local/etc/php/php.ini \
     && composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 COPY conf/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+COPY conf/php-custom-develop.ini /usr/local/etc/php/conf.d/php-custom.ini
 
 FROM base AS production
 
@@ -65,6 +65,6 @@ ARG PHP_MAJOR_VERSION=7.3
 ARG PHP_MOD=fpm
 
 RUN docker-php-ext-install opcache \
-    && cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
-    && printf '%s\n' 'post_max_size=20M' 'upload_max_filesize=20M' 'max_input_vars=10000' >> /usr/local/etc/php/php.ini
+    && cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
+COPY conf/php-custom-production.ini /usr/local/etc/php/conf.d/php-custom.ini
