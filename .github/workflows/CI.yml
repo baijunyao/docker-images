@@ -473,6 +473,30 @@ jobs:
           docker push baijunyao/grafana:7.3.4
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/grafana:7.3.4
 
+  pnpm:
+    strategy:
+      matrix:
+        version: [ "10" ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          username: baijunyao
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: azure/docker-login@v1
+        with:
+          login-server: registry.cn-beijing.aliyuncs.com
+          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: PNPM ${{ matrix.version }}
+        run: |
+          docker build -f pnpm/Dockerfile -t baijunyao/pnpm:${{ matrix.version }} pnpm/ --build-arg PNPM_VERSION=${{ matrix.version }}
+          docker tag baijunyao/pnpm:${{ matrix.version }} registry.cn-beijing.aliyuncs.com/baijunyao/pnpm:${{ matrix.version }}
+          docker push baijunyao/pnpm:${{ matrix.version }}
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/pnpm:${{ matrix.version }}
+
   cert_manager:
     strategy:
       matrix:
@@ -496,7 +520,7 @@ jobs:
   notify:
     name: Slack Notify
     runs-on: ubuntu-latest
-    needs: [ubuntu_bionic, ubuntu_focal, busybox, alpine, mysql-client, nginx, mysql_8_0, mysql_5_7, mysql_5_6, php, php_nginx, redis, elasticsearch, kibana, fluentd, ossutil, prometheus, node_exporter, grafana, cert_manager]
+    needs: [ubuntu_bionic, ubuntu_focal, busybox, alpine, mysql-client, nginx, mysql_8_0, mysql_5_7, mysql_5_6, php, php_nginx, redis, elasticsearch, kibana, fluentd, ossutil, prometheus, node_exporter, grafana, pnpm, cert_manager]
     if: always()
     steps:
       - name: Slack Notify
