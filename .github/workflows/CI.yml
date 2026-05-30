@@ -70,7 +70,9 @@ jobs:
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/busybox:1.32
 
   alpine:
-    name: Alpine
+    strategy:
+      matrix:
+        version: [ "3.12", "3.23" ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -84,12 +86,12 @@ jobs:
           login-server: registry.cn-beijing.aliyuncs.com
           username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Alpine 3.12
+      - name: Alpine ${{ matrix.version }}
         run: |
-          docker build -f alpine/3.12/Dockerfile -t baijunyao/alpine:3.12 alpine/3.12/
-          docker tag baijunyao/alpine:3.12 registry.cn-beijing.aliyuncs.com/baijunyao/alpine:3.12
-          docker push baijunyao/alpine:3.12
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/alpine:3.12
+          docker build -f alpine/Dockerfile -t baijunyao/alpine:${{ matrix.version }} alpine/ --build-arg ALPINE_VERSION=${{ matrix.version }}
+          docker tag baijunyao/alpine:${{ matrix.version }} registry.cn-beijing.aliyuncs.com/baijunyao/alpine:${{ matrix.version }}
+          docker push baijunyao/alpine:${{ matrix.version }}
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/alpine:${{ matrix.version }}
 
   mysql-client:
     name: MySQL Client
@@ -386,7 +388,11 @@ jobs:
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/fluentd:1.11
 
   ossutil:
-    name: OSSUtil
+    needs: alpine
+    strategy:
+      matrix:
+        version: [ "1.7.0", "2.3.0" ]
+        alpine_version: [ "3.23" ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -400,12 +406,12 @@ jobs:
           login-server: registry.cn-beijing.aliyuncs.com
           username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: OSSUTIL 1.7.0
+      - name: OSSUTIL ${{ matrix.version }}
         run: |
-          docker build -f ossutil/1.7.0/Dockerfile -t baijunyao/ossutil:1.7.0 ossutil/1.7.0/
-          docker tag baijunyao/ossutil:1.7.0 registry.cn-beijing.aliyuncs.com/baijunyao/ossutil:1.7.0
-          docker push baijunyao/ossutil:1.7.0
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/ossutil:1.7.0
+          docker build -f ossutil/Dockerfile -t baijunyao/ossutil:${{ matrix.version }} ossutil/ --build-arg OSSUTIL_VERSION=${{ matrix.version }} --build-arg ALPINE_VERSION=${{ matrix.alpine_version }}
+          docker tag baijunyao/ossutil:${{ matrix.version }} registry.cn-beijing.aliyuncs.com/baijunyao/ossutil:${{ matrix.version }}
+          docker push baijunyao/ossutil:${{ matrix.version }}
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/ossutil:${{ matrix.version }}
 
   prometheus:
     name: Prometheus
