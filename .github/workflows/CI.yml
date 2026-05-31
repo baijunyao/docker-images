@@ -226,7 +226,7 @@ jobs:
   php:
     strategy:
       matrix:
-        version: [ "7.3", "7.4", "8.0", "8.1", "8.2", "8.3", "8.4" ]
+        version: [ "7.3", "7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5" ]
         mod: [ fpm, cli ]
         target: [ local, production ]
     runs-on: ubuntu-latest
@@ -249,10 +249,11 @@ jobs:
           docker push baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}
 
-  php_8_1_xlswriter:
-    name: PHP 8.1 with xlswriter
+  php_xlswriter:
+    name: PHP with xlswriter
     strategy:
       matrix:
+        version: [ "8.1", "8.5" ]
         mod: [ fpm, cli ]
         target: [ local, production ]
     runs-on: ubuntu-latest
@@ -268,12 +269,12 @@ jobs:
           login-server: registry.cn-beijing.aliyuncs.com
           username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: PHP 8.1-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
+      - name: PHP ${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
         run: |
-          docker build -f php/Dockerfile.8.1-xlswriter -t baijunyao/php:8.1-${{ matrix.mod }}-${{ matrix.target }}-xlswriter php/ --build-arg PHP_MOD=${{ matrix.mod }} --target ${{ matrix.target }}
-          docker tag baijunyao/php:8.1-${{ matrix.mod }}-${{ matrix.target }}-xlswriter registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
-          docker push baijunyao/php:8.1-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:8.1-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
+          docker build -f php/Dockerfile.xlswriter -t baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter php/ --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --target ${{ matrix.target }}
+          docker tag baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
+          docker push baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
+          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
 
   php_nginx:
     name: PHP with NGINX

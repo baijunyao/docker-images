@@ -28,6 +28,7 @@ RUN set -xe \
     && case "${PHP_MAJOR_VERSION}" in \
         7.3) pecl install -o -f redis-6.0.2 ;; \
         7.4|8.0|8.1|8.2|8.3|8.4) pecl install -o -f redis-6.2.0 ;; \
+        8.5) pecl install -o -f redis-6.3.0 ;; \
         *) echo "Unsupported PHP version (${PHP_MAJOR_VERSION}) for redis extension" && exit 1 ;; \
        esac \
     && docker-php-ext-enable redis \
@@ -50,6 +51,7 @@ RUN docker-php-ext-install pcntl \
     && case "${PHP_MAJOR_VERSION}" in \
         7.3|7.4) pecl install -o -f xdebug-3.1.6 ;; \
         8.0|8.1|8.2|8.3|8.4) pecl install -o -f xdebug-3.4.2 ;; \
+        8.5) pecl install -o -f xdebug-3.5.1 ;; \
         *) echo "Unsupported PHP version (${PHP_MAJOR_VERSION}) for xdebug extension" && exit 1 ;; \
        esac \
     && cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
@@ -64,7 +66,9 @@ FROM base AS production
 ARG PHP_MAJOR_VERSION=7.3
 ARG PHP_MOD=fpm
 
-RUN docker-php-ext-install opcache \
+RUN if [ "${PHP_MAJOR_VERSION}" != "8.5" ]; then \
+        docker-php-ext-install opcache; \
+    fi \
     && cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
 COPY conf/php-custom-production.ini /usr/local/etc/php/conf.d/php-custom.ini
