@@ -24,7 +24,7 @@ RUN set -xe \
         docker-php-ext-configure gd --with-freetype --with-jpeg; \
     fi \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install intl gd pdo_mysql zip exif \
+    && docker-php-ext-install intl gd pdo_mysql zip exif pcntl \
     && case "${PHP_MAJOR_VERSION}" in \
         7.3) pecl install -o -f redis-6.0.2 ;; \
         7.4|8.0|8.1|8.2|8.3|8.4) pecl install -o -f redis-6.2.0 ;; \
@@ -47,8 +47,7 @@ FROM base AS local
 ARG PHP_MAJOR_VERSION=7.3
 ARG PHP_MOD=fpm
 
-RUN docker-php-ext-install pcntl \
-    && case "${PHP_MAJOR_VERSION}" in \
+RUN case "${PHP_MAJOR_VERSION}" in \
         7.3|7.4) pecl install -o -f xdebug-3.1.6 ;; \
         8.0|8.1|8.2|8.3|8.4) pecl install -o -f xdebug-3.4.2 ;; \
         8.5) pecl install -o -f xdebug-3.5.1 ;; \
