@@ -271,7 +271,7 @@ jobs:
           password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: PHP ${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
         run: |
-          docker build -f php/Dockerfile.xlswriter -t baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter php/ --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --target ${{ matrix.target }}
+          docker build -f php/Dockerfile -t baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter php/ --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --build-arg INSTALL_XLSWRITER=true --target ${{ matrix.target }}
           docker tag baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
           docker push baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
           docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter

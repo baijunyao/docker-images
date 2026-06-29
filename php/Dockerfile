@@ -1,11 +1,13 @@
 ARG PHP_MAJOR_VERSION=7.3
 ARG PHP_MOD=fpm
+ARG INSTALL_XLSWRITER=false
 
 FROM php:${PHP_MAJOR_VERSION}-${PHP_MOD} AS base
 
 # Due to scope issues, it is necessary to redefine here. https://docs.docker.com/engine/reference/builder/#scope
 ARG PHP_MAJOR_VERSION=7.3
 ARG PHP_MOD=fpm
+ARG INSTALL_XLSWRITER=false
 
 RUN set -xe \
     && apt-get update \
@@ -32,6 +34,10 @@ RUN set -xe \
         *) echo "Unsupported PHP version (${PHP_MAJOR_VERSION}) for redis extension" && exit 1 ;; \
        esac \
     && docker-php-ext-enable redis \
+    && if [ "${INSTALL_XLSWRITER}" = "true" ]; then \
+        pecl install -o -f xlswriter-2.0.0 \
+        && docker-php-ext-enable xlswriter; \
+    fi \
     && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && php -r "unlink('composer-setup.php');" \
