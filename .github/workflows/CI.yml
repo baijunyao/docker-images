@@ -2,72 +2,48 @@ name: CI
 
 on: [push]
 
+env:
+  DOCKER_PLATFORMS: linux/amd64,linux/arm64
+
 jobs:
   ubuntu_bionic:
     name: Ubuntu Bionic
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Ubuntu Bionic
-        run: |
-          docker build -f ubuntu/bionic/Dockerfile -t baijunyao/ubuntu:bionic ubuntu/bionic/
-          docker tag baijunyao/ubuntu:bionic registry.cn-beijing.aliyuncs.com/baijunyao/ubuntu:bionic
-          docker push baijunyao/ubuntu:bionic
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/ubuntu:bionic
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh ubuntu/bionic/Dockerfile ubuntu/bionic baijunyao/ubuntu:bionic
 
   ubuntu_focal:
     name: Ubuntu Focal
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Ubuntu Focal
-        run: |
-          docker build -f ubuntu/focal/Dockerfile -t baijunyao/ubuntu:focal ubuntu/focal/
-          docker tag baijunyao/ubuntu:focal registry.cn-beijing.aliyuncs.com/baijunyao/ubuntu:focal
-          docker push baijunyao/ubuntu:focal
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/ubuntu:focal
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh ubuntu/focal/Dockerfile ubuntu/focal baijunyao/ubuntu:focal
 
   busybox:
     name: BusyBox
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: BusyBox 1.32
-        run: |
-          docker build -f busybox/1.32/Dockerfile -t baijunyao/busybox:1.32 busybox/1.32/
-          docker tag baijunyao/busybox:1.32 registry.cn-beijing.aliyuncs.com/baijunyao/busybox:1.32
-          docker push baijunyao/busybox:1.32
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/busybox:1.32
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh busybox/1.32/Dockerfile busybox/1.32 baijunyao/busybox:1.32
 
   alpine:
     strategy:
@@ -75,45 +51,28 @@ jobs:
         version: [ "3.12", "3.23" ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Alpine ${{ matrix.version }}
-        run: |
-          docker build -f alpine/Dockerfile -t baijunyao/alpine:${{ matrix.version }} alpine/ --build-arg ALPINE_VERSION=${{ matrix.version }}
-          docker tag baijunyao/alpine:${{ matrix.version }} registry.cn-beijing.aliyuncs.com/baijunyao/alpine:${{ matrix.version }}
-          docker push baijunyao/alpine:${{ matrix.version }}
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/alpine:${{ matrix.version }}
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh alpine/Dockerfile alpine baijunyao/alpine:${{ matrix.version }} --build-arg ALPINE_VERSION=${{ matrix.version }}
 
   mysql-client:
     name: MySQL Client
+    needs: alpine
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: MySQL Client
-        run: |
-          docker build -f mysql-client/1.1/Dockerfile -t baijunyao/mysql-client:1.1 mysql-client/1.1/
-          docker tag baijunyao/mysql-client:1.1 registry.cn-beijing.aliyuncs.com/baijunyao/mysql-client:1.1
-          docker push baijunyao/mysql-client:1.1
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql-client:1.1
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh mysql-client/1.1/Dockerfile mysql-client/1.1 baijunyao/mysql-client:1.1
 
   nginx:
     strategy:
@@ -121,107 +80,64 @@ jobs:
         version: [ "1.19", "1.29" ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: NGINX ${{ matrix.version }}
-        run: |
-          docker build -f nginx/Dockerfile -t baijunyao/nginx:${{ matrix.version }} nginx/ --build-arg NGINX_MAJOR_VERSION=${{ matrix.version }}
-          docker tag baijunyao/nginx:${{ matrix.version }} registry.cn-beijing.aliyuncs.com/baijunyao/nginx:${{ matrix.version }}
-          docker push baijunyao/nginx:${{ matrix.version }}
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/nginx:${{ matrix.version }}
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh nginx/Dockerfile nginx baijunyao/nginx:${{ matrix.version }} --build-arg NGINX_MAJOR_VERSION=${{ matrix.version }}
 
   mysql_8_0:
     name: MySQL 8.0
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: MySQL 8.0 local
-        run: |
-          docker build -f mysql/8.0/Dockerfile.local -t baijunyao/mysql:8.0-local mysql/8.0/
-          docker tag baijunyao/mysql:8.0-local registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-local
-          docker push baijunyao/mysql:8.0-local
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-local
-      - name: MySQL 8.0 production
-        run: |
-          docker build -f mysql/8.0/Dockerfile.production -t baijunyao/mysql:8.0-production mysql/8.0/
-          docker tag baijunyao/mysql:8.0-production registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-production
-          docker push baijunyao/mysql:8.0-production
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:8.0-production
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh mysql/8.0/Dockerfile.local mysql/8.0 baijunyao/mysql:8.0-local
+      - run: .github/scripts/build-and-push.sh mysql/8.0/Dockerfile.production mysql/8.0 baijunyao/mysql:8.0-production
 
   mysql_5_7:
     name: MySQL 5.7
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: MySQL 5.7 local
-        run: |
-          docker build -f mysql/5.7/Dockerfile.local -t baijunyao/mysql:5.7-local mysql/5.7/
-          docker tag baijunyao/mysql:5.7-local registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-local
-          docker push baijunyao/mysql:5.7-local
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-local
-      - name: MySQL 5.7 production
-        run: |
-          docker build -f mysql/5.7/Dockerfile.production -t baijunyao/mysql:5.7-production mysql/5.7/
-          docker tag baijunyao/mysql:5.7-production registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-production
-          docker push baijunyao/mysql:5.7-production
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.7-production
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh mysql/5.7/Dockerfile.local mysql/5.7 baijunyao/mysql:5.7-local
+        env:
+          DOCKER_PLATFORMS: linux/amd64
+      - run: .github/scripts/build-and-push.sh mysql/5.7/Dockerfile.production mysql/5.7 baijunyao/mysql:5.7-production
+        env:
+          DOCKER_PLATFORMS: linux/amd64
 
   mysql_5_6:
     name: MySQL 5.6
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: MySQL 5.6 local
-        run: |
-          docker build -f mysql/5.6/Dockerfile.local -t baijunyao/mysql:5.6-local mysql/5.6/
-          docker tag baijunyao/mysql:5.6-local registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-local
-          docker push baijunyao/mysql:5.6-local
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-local
-      - name: MySQL 5.6 production
-        run: |
-          docker build -f mysql/5.6/Dockerfile.production -t baijunyao/mysql:5.6-production mysql/5.6/
-          docker tag baijunyao/mysql:5.6-production registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-production
-          docker push baijunyao/mysql:5.6-production
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/mysql:5.6-production
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh mysql/5.6/Dockerfile.local mysql/5.6 baijunyao/mysql:5.6-local
+        env:
+          DOCKER_PLATFORMS: linux/amd64
+      - run: .github/scripts/build-and-push.sh mysql/5.6/Dockerfile.production mysql/5.6 baijunyao/mysql:5.6-production
+        env:
+          DOCKER_PLATFORMS: linux/amd64
 
   php:
     strategy:
@@ -231,23 +147,14 @@ jobs:
         target: [ local, production ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: PHP ${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}
-        run: |
-          docker build -f php/Dockerfile -t baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }} php/ --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --target ${{ matrix.target }}
-          docker tag baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }} registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}
-          docker push baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh php/Dockerfile php baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }} --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --target ${{ matrix.target }}
 
   php_xlswriter:
     name: PHP with xlswriter
@@ -258,135 +165,94 @@ jobs:
         target: [ local, production ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: PHP ${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
-        run: |
-          docker build -f php/Dockerfile -t baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter php/ --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --build-arg INSTALL_XLSWRITER=true --target ${{ matrix.target }}
-          docker tag baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
-          docker push baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh php/Dockerfile php baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --build-arg INSTALL_XLSWRITER=true --target ${{ matrix.target }}
 
   php_nginx:
     name: PHP with NGINX
+    needs: php
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: PHP with NGINX
-        run: |
-          docker build -f php-nginx/Dockerfile -t baijunyao/php-nginx php-nginx/
-          docker tag baijunyao/php-nginx registry.cn-beijing.aliyuncs.com/baijunyao/php-nginx
-          docker push baijunyao/php-nginx
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/php-nginx
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh php-nginx/Dockerfile php-nginx baijunyao/php-nginx
 
   redis:
     name: Redis
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Redis 6.0
-        run: |
-          docker build -f redis/6.0/Dockerfile -t baijunyao/redis:6.0 redis/6.0/
-          docker tag baijunyao/redis:6.0 registry.cn-beijing.aliyuncs.com/baijunyao/redis:6.0
-          docker push baijunyao/redis:6.0
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/redis:6.0
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh redis/6.0/Dockerfile redis/6.0 baijunyao/redis:6.0
 
   elasticsearch:
     strategy:
       matrix:
-        version: [ "7.4.1", "7.6.2", "7.10.1" ]
+        include:
+          - version: "7.4.1"
+            platforms: linux/amd64
+          - version: "7.6.2"
+            platforms: linux/amd64
+          - version: "7.10.1"
+            platforms: linux/amd64,linux/arm64
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Elasticsearch
-        run: |
-          docker build -f elasticsearch/Dockerfile -t baijunyao/elasticsearch:${{ matrix.version }} elasticsearch/ --build-arg ELASTICSEARCH_VERSION=${{ matrix.version }}
-          docker tag baijunyao/elasticsearch:${{ matrix.version }} registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:${{ matrix.version }}
-          docker push baijunyao/elasticsearch:${{ matrix.version }}
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/elasticsearch:${{ matrix.version }}
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh elasticsearch/Dockerfile elasticsearch baijunyao/elasticsearch:${{ matrix.version }} --build-arg ELASTICSEARCH_VERSION=${{ matrix.version }}
+        env:
+          DOCKER_PLATFORMS: ${{ matrix.platforms }}
 
   kibana:
     name: Kibana
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Kibana 7.10.1
-        run: |
-          docker build -f kibana/7.10.1/Dockerfile -t baijunyao/kibana:7.10.1 kibana/7.10.1/
-          docker tag baijunyao/kibana:7.10.1 registry.cn-beijing.aliyuncs.com/baijunyao/kibana:7.10.1
-          docker push baijunyao/kibana:7.10.1
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/kibana:7.10.1
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh kibana/7.10.1/Dockerfile kibana/7.10.1 baijunyao/kibana:7.10.1
+        env:
+          DOCKER_PLATFORMS: linux/amd64
 
   fluentd:
     name: Fluentd
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Fluentd 1.11
-        run: |
-          docker build -f fluentd/1.11/Dockerfile -t baijunyao/fluentd:1.11 fluentd/1.11/
-          docker tag baijunyao/fluentd:1.11 registry.cn-beijing.aliyuncs.com/baijunyao/fluentd:1.11
-          docker push baijunyao/fluentd:1.11
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/fluentd:1.11
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh fluentd/1.11/Dockerfile fluentd/1.11 baijunyao/fluentd:1.11
+        env:
+          DOCKER_PLATFORMS: linux/amd64
 
   ossutil:
     needs: alpine
@@ -396,89 +262,53 @@ jobs:
         alpine_version: [ "3.23" ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: OSSUTIL ${{ matrix.version }}
-        run: |
-          docker build -f ossutil/Dockerfile -t baijunyao/ossutil:${{ matrix.version }} ossutil/ --build-arg OSSUTIL_VERSION=${{ matrix.version }} --build-arg ALPINE_VERSION=${{ matrix.alpine_version }}
-          docker tag baijunyao/ossutil:${{ matrix.version }} registry.cn-beijing.aliyuncs.com/baijunyao/ossutil:${{ matrix.version }}
-          docker push baijunyao/ossutil:${{ matrix.version }}
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/ossutil:${{ matrix.version }}
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh ossutil/Dockerfile ossutil baijunyao/ossutil:${{ matrix.version }} --build-arg OSSUTIL_VERSION=${{ matrix.version }} --build-arg ALPINE_VERSION=${{ matrix.alpine_version }}
 
   prometheus:
     name: Prometheus
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Prometheus v2.23.0
-        run: |
-          docker build -f prometheus/2.23.0/Dockerfile -t baijunyao/prometheus:v2.23.0 prometheus/2.23.0/
-          docker tag baijunyao/prometheus:v2.23.0 registry.cn-beijing.aliyuncs.com/baijunyao/prometheus:v2.23.0
-          docker push baijunyao/prometheus:v2.23.0
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/prometheus:v2.23.0
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh prometheus/2.23.0/Dockerfile prometheus/2.23.0 baijunyao/prometheus:v2.23.0
 
   node_exporter:
     name: Node exporter
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Node exporter v1.1.2
-        run: |
-          docker build -f node-exporter/1.1.2/Dockerfile -t baijunyao/node-exporter:v1.1.2 node-exporter/1.1.2/
-          docker tag baijunyao/node-exporter:v1.1.2 registry.cn-beijing.aliyuncs.com/baijunyao/node-exporter:v1.1.2
-          docker push baijunyao/node-exporter:v1.1.2
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/node-exporter:v1.1.2
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh node-exporter/1.1.2/Dockerfile node-exporter/1.1.2 baijunyao/node-exporter:v1.1.2
 
   grafana:
     name: Grafana
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: Grafana 7.3.4
-        run: |
-          docker build -f grafana/7.3.4/Dockerfile -t baijunyao/grafana:7.3.4 grafana/7.3.4/
-          docker tag baijunyao/grafana:7.3.4 registry.cn-beijing.aliyuncs.com/baijunyao/grafana:7.3.4
-          docker push baijunyao/grafana:7.3.4
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/grafana:7.3.4
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh grafana/7.3.4/Dockerfile grafana/7.3.4 baijunyao/grafana:7.3.4
 
   pnpm:
     strategy:
@@ -486,23 +316,14 @@ jobs:
         version: [ "10" ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          username: baijunyao
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: azure/docker-login@v1
-        with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - name: PNPM ${{ matrix.version }}
-        run: |
-          docker build -f pnpm/Dockerfile -t baijunyao/pnpm:${{ matrix.version }} pnpm/ --build-arg PNPM_VERSION=${{ matrix.version }}
-          docker tag baijunyao/pnpm:${{ matrix.version }} registry.cn-beijing.aliyuncs.com/baijunyao/pnpm:${{ matrix.version }}
-          docker push baijunyao/pnpm:${{ matrix.version }}
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/pnpm:${{ matrix.version }}
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - run: .github/scripts/build-and-push.sh pnpm/Dockerfile pnpm baijunyao/pnpm:${{ matrix.version }} --build-arg PNPM_VERSION=${{ matrix.version }}
 
   cert_manager:
     strategy:
@@ -511,15 +332,15 @@ jobs:
         repository: [ "cert-manager-controller", "cert-manager-webhook", "cert-manager-cainjector", "cert-manager-acmesolver", "cert-manager-ctl" ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - uses: azure/docker-login@v1
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
         with:
-          login-server: registry.cn-beijing.aliyuncs.com
-          username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - name: ${{ matrix.repository }}-v${{ matrix.version }}
         run: |
-          docker pull quay.io/jetstack/${{ matrix.repository }}:v${{ matrix.version }}
-          docker tag quay.io/jetstack/${{ matrix.repository }}:v${{ matrix.version }} registry.cn-beijing.aliyuncs.com/baijunyao/${{ matrix.repository }}:v${{ matrix.version }}
-          docker push registry.cn-beijing.aliyuncs.com/baijunyao/${{ matrix.repository }}:v${{ matrix.version }}
+          docker buildx imagetools create \
+            -t registry.cn-beijing.aliyuncs.com/baijunyao/${{ matrix.repository }}:v${{ matrix.version }} \
+            quay.io/jetstack/${{ matrix.repository }}:v${{ matrix.version }}
