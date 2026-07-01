@@ -6,8 +6,91 @@ env:
   DOCKER_PLATFORMS: linux/amd64,linux/arm64
 
 jobs:
+  changes:
+    name: Detect changed images
+    runs-on: ubuntu-latest
+    outputs:
+      all: ${{ steps.filter.outputs.all }}
+      alpine: ${{ steps.filter.outputs.alpine }}
+      busybox: ${{ steps.filter.outputs.busybox }}
+      cert_manager: ${{ steps.filter.outputs.cert_manager }}
+      elasticsearch: ${{ steps.filter.outputs.elasticsearch }}
+      fluentd: ${{ steps.filter.outputs.fluentd }}
+      grafana: ${{ steps.filter.outputs.grafana }}
+      kibana: ${{ steps.filter.outputs.kibana }}
+      mysql_5_6: ${{ steps.filter.outputs.mysql_5_6 }}
+      mysql_5_7: ${{ steps.filter.outputs.mysql_5_7 }}
+      mysql_8_0: ${{ steps.filter.outputs.mysql_8_0 }}
+      mysql_client: ${{ steps.filter.outputs.mysql_client }}
+      nginx: ${{ steps.filter.outputs.nginx }}
+      node_exporter: ${{ steps.filter.outputs.node_exporter }}
+      ossutil: ${{ steps.filter.outputs.ossutil }}
+      php: ${{ steps.filter.outputs.php }}
+      php_nginx: ${{ steps.filter.outputs.php_nginx }}
+      pnpm: ${{ steps.filter.outputs.pnpm }}
+      prometheus: ${{ steps.filter.outputs.prometheus }}
+      redis: ${{ steps.filter.outputs.redis }}
+      ubuntu_bionic: ${{ steps.filter.outputs.ubuntu_bionic }}
+      ubuntu_focal: ${{ steps.filter.outputs.ubuntu_focal }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            all:
+              - '.github/workflows/CI.yml'
+              - '.github/scripts/**'
+              - '.github/actions/**'
+            alpine:
+              - 'alpine/**'
+            busybox:
+              - 'busybox/1.32/**'
+            cert_manager:
+              - '.github/workflows/CI.yml'
+            elasticsearch:
+              - 'elasticsearch/**'
+            fluentd:
+              - 'fluentd/1.11/**'
+            grafana:
+              - 'grafana/7.3.4/**'
+            kibana:
+              - 'kibana/7.10.1/**'
+            mysql_5_6:
+              - 'mysql/5.6/**'
+            mysql_5_7:
+              - 'mysql/5.7/**'
+            mysql_8_0:
+              - 'mysql/8.0/**'
+            mysql_client:
+              - 'mysql-client/1.1/**'
+            nginx:
+              - 'nginx/**'
+            node_exporter:
+              - 'node-exporter/1.1.2/**'
+            ossutil:
+              - 'ossutil/**'
+            php:
+              - 'php/**'
+            php_nginx:
+              - 'php-nginx/**'
+            pnpm:
+              - 'pnpm/**'
+            prometheus:
+              - 'prometheus/2.23.0/**'
+            redis:
+              - 'redis/6.0/**'
+            ubuntu_bionic:
+              - 'ubuntu/bionic/**'
+            ubuntu_focal:
+              - 'ubuntu/focal/**'
+
   ubuntu_bionic:
     name: Ubuntu Bionic
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.ubuntu_bionic == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,6 +104,8 @@ jobs:
 
   ubuntu_focal:
     name: Ubuntu Focal
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.ubuntu_focal == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,6 +119,8 @@ jobs:
 
   busybox:
     name: BusyBox
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.busybox == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -46,6 +133,8 @@ jobs:
       - run: .github/scripts/build-and-push.sh busybox/1.32/Dockerfile busybox/1.32 baijunyao/busybox:1.32
 
   alpine:
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.alpine == 'true'
     strategy:
       matrix:
         version: [ "3.12", "3.23" ]
@@ -62,7 +151,16 @@ jobs:
 
   mysql-client:
     name: MySQL Client
-    needs: alpine
+    needs: [changes, alpine]
+    if: >
+      always() &&
+      needs.alpine.result != 'failure' &&
+      needs.alpine.result != 'cancelled' &&
+      (
+        needs.changes.outputs.all == 'true' ||
+        needs.changes.outputs.alpine == 'true' ||
+        needs.changes.outputs.mysql_client == 'true'
+      )
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -75,6 +173,8 @@ jobs:
       - run: .github/scripts/build-and-push.sh mysql-client/1.1/Dockerfile mysql-client/1.1 baijunyao/mysql-client:1.1
 
   nginx:
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.nginx == 'true'
     strategy:
       matrix:
         version: [ "1.19", "1.29" ]
@@ -91,6 +191,8 @@ jobs:
 
   mysql_8_0:
     name: MySQL 8.0
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.mysql_8_0 == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -105,6 +207,8 @@ jobs:
 
   mysql_5_7:
     name: MySQL 5.7
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.mysql_5_7 == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -123,6 +227,8 @@ jobs:
 
   mysql_5_6:
     name: MySQL 5.6
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.mysql_5_6 == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -140,6 +246,8 @@ jobs:
           DOCKER_PLATFORMS: linux/amd64
 
   php:
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.php == 'true'
     strategy:
       matrix:
         version: [ "7.3", "7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5" ]
@@ -158,6 +266,8 @@ jobs:
 
   php_xlswriter:
     name: PHP with xlswriter
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.php == 'true'
     strategy:
       matrix:
         version: [ "8.1", "8.5" ]
@@ -176,7 +286,16 @@ jobs:
 
   php_nginx:
     name: PHP with NGINX
-    needs: php
+    needs: [changes, php]
+    if: >
+      always() &&
+      needs.php.result != 'failure' &&
+      needs.php.result != 'cancelled' &&
+      (
+        needs.changes.outputs.all == 'true' ||
+        needs.changes.outputs.php == 'true' ||
+        needs.changes.outputs.php_nginx == 'true'
+      )
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -190,6 +309,8 @@ jobs:
 
   redis:
     name: Redis
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.redis == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -202,6 +323,8 @@ jobs:
       - run: .github/scripts/build-and-push.sh redis/6.0/Dockerfile redis/6.0 baijunyao/redis:6.0
 
   elasticsearch:
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.elasticsearch == 'true'
     strategy:
       matrix:
         include:
@@ -226,6 +349,8 @@ jobs:
 
   kibana:
     name: Kibana
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.kibana == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -241,6 +366,8 @@ jobs:
 
   fluentd:
     name: Fluentd
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.fluentd == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -255,7 +382,16 @@ jobs:
           DOCKER_PLATFORMS: linux/amd64
 
   ossutil:
-    needs: alpine
+    needs: [changes, alpine]
+    if: >
+      always() &&
+      needs.alpine.result != 'failure' &&
+      needs.alpine.result != 'cancelled' &&
+      (
+        needs.changes.outputs.all == 'true' ||
+        needs.changes.outputs.alpine == 'true' ||
+        needs.changes.outputs.ossutil == 'true'
+      )
     strategy:
       matrix:
         version: [ "1.7.0", "2.3.0" ]
@@ -273,6 +409,8 @@ jobs:
 
   prometheus:
     name: Prometheus
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.prometheus == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -286,6 +424,8 @@ jobs:
 
   node_exporter:
     name: Node exporter
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.node_exporter == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -299,6 +439,8 @@ jobs:
 
   grafana:
     name: Grafana
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.grafana == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -311,6 +453,8 @@ jobs:
       - run: .github/scripts/build-and-push.sh grafana/7.3.4/Dockerfile grafana/7.3.4 baijunyao/grafana:7.3.4
 
   pnpm:
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.pnpm == 'true'
     strategy:
       matrix:
         version: [ "10" ]
@@ -326,6 +470,8 @@ jobs:
       - run: .github/scripts/build-and-push.sh pnpm/Dockerfile pnpm baijunyao/pnpm:${{ matrix.version }} --build-arg PNPM_VERSION=${{ matrix.version }}
 
   cert_manager:
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.cert_manager == 'true'
     strategy:
       matrix:
         version: [ "1.10.2" ]
