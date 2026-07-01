@@ -263,6 +263,8 @@ jobs:
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - run: .github/scripts/build-and-push.sh php/Dockerfile php baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }} --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --target ${{ matrix.target }}
+        env:
+          DOCKER_PLATFORMS: ${{ matrix.version == '7.3' && 'linux/amd64' || env.DOCKER_PLATFORMS }}
 
   php_xlswriter:
     name: PHP with xlswriter
