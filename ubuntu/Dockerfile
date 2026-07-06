@@ -1,4 +1,6 @@
-FROM ubuntu:bionic
+ARG UBUNTU_VERSION=focal
+
+FROM ubuntu:${UBUNTU_VERSION}
 
 ENV TZ="Asia/Shanghai"
 

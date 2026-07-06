@@ -47,29 +47,32 @@ jobs:
             alpine:
               - 'alpine/**'
             busybox:
-              - 'busybox/1.32/**'
+              - 'busybox/**'
             cert_manager:
               - '.github/workflows/CI.yml'
             elasticsearch:
               - 'elasticsearch/**'
             fluentd:
-              - 'fluentd/1.11/**'
+              - 'fluentd/**'
             grafana:
-              - 'grafana/7.3.4/**'
+              - 'grafana/**'
             kibana:
-              - 'kibana/7.10.1/**'
+              - 'kibana/**'
             mysql_5_6:
+              - 'mysql/Dockerfile'
               - 'mysql/5.6/**'
             mysql_5_7:
+              - 'mysql/Dockerfile'
               - 'mysql/5.7/**'
             mysql_8_0:
+              - 'mysql/Dockerfile'
               - 'mysql/8.0/**'
             mysql_client:
-              - 'mysql-client/1.1/**'
+              - 'mysql-client/**'
             nginx:
               - 'nginx/**'
             node_exporter:
-              - 'node-exporter/1.1.2/**'
+              - 'node-exporter/**'
             ossutil:
               - 'ossutil/**'
             php:
@@ -79,13 +82,13 @@ jobs:
             pnpm:
               - 'pnpm/**'
             prometheus:
-              - 'prometheus/2.23.0/**'
+              - 'prometheus/**'
             redis:
-              - 'redis/6.0/**'
+              - 'redis/**'
             ubuntu_bionic:
-              - 'ubuntu/bionic/**'
+              - 'ubuntu/**'
             ubuntu_focal:
-              - 'ubuntu/focal/**'
+              - 'ubuntu/**'
 
   ubuntu_bionic:
     name: Ubuntu Bionic
@@ -100,7 +103,7 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh ubuntu/bionic/Dockerfile ubuntu/bionic baijunyao/ubuntu:bionic
+      - run: .github/scripts/build-and-push.sh ubuntu/Dockerfile ubuntu baijunyao/ubuntu:bionic --build-arg UBUNTU_VERSION=bionic
 
   ubuntu_focal:
     name: Ubuntu Focal
@@ -115,7 +118,7 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh ubuntu/focal/Dockerfile ubuntu/focal baijunyao/ubuntu:focal
+      - run: .github/scripts/build-and-push.sh ubuntu/Dockerfile ubuntu baijunyao/ubuntu:focal --build-arg UBUNTU_VERSION=focal
 
   busybox:
     name: BusyBox
@@ -130,7 +133,7 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh busybox/1.32/Dockerfile busybox/1.32 baijunyao/busybox:1.32
+      - run: .github/scripts/build-and-push.sh busybox/Dockerfile busybox baijunyao/busybox:1.32 --build-arg BUSYBOX_VERSION=1.32
 
   alpine:
     needs: changes
@@ -170,7 +173,7 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh mysql-client/1.1/Dockerfile mysql-client/1.1 baijunyao/mysql-client:1.1
+      - run: .github/scripts/build-and-push.sh mysql-client/Dockerfile mysql-client baijunyao/mysql-client:1.1
 
   nginx:
     needs: changes
@@ -202,8 +205,8 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh mysql/8.0/Dockerfile.local mysql/8.0 baijunyao/mysql:8.0-local
-      - run: .github/scripts/build-and-push.sh mysql/8.0/Dockerfile.production mysql/8.0 baijunyao/mysql:8.0-production
+      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:8.0-local --build-arg MYSQL_VERSION=8.0 --build-arg MYSQL_ENV=local
+      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:8.0-production --build-arg MYSQL_VERSION=8.0 --build-arg MYSQL_ENV=production
 
   mysql_5_7:
     name: MySQL 5.7
@@ -218,10 +221,10 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh mysql/5.7/Dockerfile.local mysql/5.7 baijunyao/mysql:5.7-local
+      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:5.7-local --build-arg MYSQL_VERSION=5.7 --build-arg MYSQL_ENV=local
         env:
           DOCKER_PLATFORMS: linux/amd64
-      - run: .github/scripts/build-and-push.sh mysql/5.7/Dockerfile.production mysql/5.7 baijunyao/mysql:5.7-production
+      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:5.7-production --build-arg MYSQL_VERSION=5.7 --build-arg MYSQL_ENV=production
         env:
           DOCKER_PLATFORMS: linux/amd64
 
@@ -238,10 +241,10 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh mysql/5.6/Dockerfile.local mysql/5.6 baijunyao/mysql:5.6-local
+      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:5.6-local --build-arg MYSQL_VERSION=5.6 --build-arg MYSQL_ENV=local
         env:
           DOCKER_PLATFORMS: linux/amd64
-      - run: .github/scripts/build-and-push.sh mysql/5.6/Dockerfile.production mysql/5.6 baijunyao/mysql:5.6-production
+      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:5.6-production --build-arg MYSQL_VERSION=5.6 --build-arg MYSQL_ENV=production
         env:
           DOCKER_PLATFORMS: linux/amd64
 
@@ -322,7 +325,7 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh redis/6.0/Dockerfile redis/6.0 baijunyao/redis:6.0
+      - run: .github/scripts/build-and-push.sh redis/Dockerfile redis baijunyao/redis:6.0 --build-arg REDIS_VERSION=6.0
 
   elasticsearch:
     needs: changes
@@ -362,7 +365,7 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh kibana/7.10.1/Dockerfile kibana/7.10.1 baijunyao/kibana:7.10.1
+      - run: .github/scripts/build-and-push.sh kibana/Dockerfile kibana baijunyao/kibana:7.10.1 --build-arg KIBANA_VERSION=7.10.1
         env:
           DOCKER_PLATFORMS: linux/amd64
 
@@ -379,7 +382,7 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh fluentd/1.11/Dockerfile fluentd/1.11 baijunyao/fluentd:1.11
+      - run: .github/scripts/build-and-push.sh fluentd/Dockerfile fluentd baijunyao/fluentd:1.11 --build-arg FLUENTD_VERSION=1.11
         env:
           DOCKER_PLATFORMS: linux/amd64
 
@@ -422,7 +425,7 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh prometheus/2.23.0/Dockerfile prometheus/2.23.0 baijunyao/prometheus:v2.23.0
+      - run: .github/scripts/build-and-push.sh prometheus/Dockerfile prometheus baijunyao/prometheus:v2.23.0 --build-arg PROMETHEUS_VERSION=2.23.0
 
   node_exporter:
     name: Node exporter
@@ -437,7 +440,7 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh node-exporter/1.1.2/Dockerfile node-exporter/1.1.2 baijunyao/node-exporter:v1.1.2
+      - run: .github/scripts/build-and-push.sh node-exporter/Dockerfile node-exporter baijunyao/node-exporter:v1.1.2 --build-arg NODE_EXPORTER_VERSION=1.1.2
 
   grafana:
     name: Grafana
@@ -452,7 +455,7 @@ jobs:
           dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh grafana/7.3.4/Dockerfile grafana/7.3.4 baijunyao/grafana:7.3.4
+      - run: .github/scripts/build-and-push.sh grafana/Dockerfile grafana baijunyao/grafana:7.3.4 --build-arg GRAFANA_VERSION=7.3.4
 
   pnpm:
     needs: changes
