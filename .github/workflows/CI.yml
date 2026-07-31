@@ -14,6 +14,7 @@ jobs:
       alpine: ${{ steps.filter.outputs.alpine }}
       busybox: ${{ steps.filter.outputs.busybox }}
       cert_manager: ${{ steps.filter.outputs.cert_manager }}
+      certimate: ${{ steps.filter.outputs.certimate }}
       elasticsearch: ${{ steps.filter.outputs.elasticsearch }}
       fluentd: ${{ steps.filter.outputs.fluentd }}
       grafana: ${{ steps.filter.outputs.grafana }}
@@ -49,6 +50,8 @@ jobs:
             busybox:
               - 'busybox/**'
             cert_manager:
+              - '.github/workflows/CI.yml'
+            certimate:
               - '.github/workflows/CI.yml'
             elasticsearch:
               - 'elasticsearch/**'
@@ -495,3 +498,24 @@ jobs:
           docker buildx imagetools create \
             -t registry.cn-beijing.aliyuncs.com/baijunyao/${{ matrix.repository }}:v${{ matrix.version }} \
             quay.io/jetstack/${{ matrix.repository }}:v${{ matrix.version }}
+
+  certimate:
+    needs: changes
+    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.certimate == 'true'
+    strategy:
+      matrix:
+        version: [ "v0.4" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-setup
+        with:
+          dockerhub-username: baijunyao
+          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
+          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
+      - name: certimate-${{ matrix.version }}
+        run: |
+          docker buildx imagetools create \
+            -t registry.cn-beijing.aliyuncs.com/baijunyao/certimate:${{ matrix.version }} \
+            certimate/certimate:${{ matrix.version }}
