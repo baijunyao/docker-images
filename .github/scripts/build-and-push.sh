@@ -19,6 +19,7 @@ docker buildx build \
     --file "${dockerfile}" \
     --tag "${dockerhub_image}" \
     --tag "${aliyun_image}" \
+    --provenance=false \
     --push \
     "$@" \
     "${context}"
