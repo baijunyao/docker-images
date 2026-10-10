@@ -482,8 +482,13 @@ jobs:
     if: needs.changes.outputs.all == 'true' || needs.changes.outputs.cert_manager == 'true'
     strategy:
       matrix:
-        version: [ "1.10.2" ]
-        repository: [ "cert-manager-controller", "cert-manager-webhook", "cert-manager-cainjector", "cert-manager-acmesolver", "cert-manager-ctl" ]
+        version: [ "1.10.2", "1.21.2" ]
+        repository: [ "cert-manager-controller", "cert-manager-webhook", "cert-manager-cainjector", "cert-manager-acmesolver" ]
+        include:
+          - version: "1.10.2"
+            repository: cert-manager-ctl
+          - version: "1.21.2"
+            repository: cert-manager-startupapicheck
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
