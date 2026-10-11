@@ -9,6 +9,24 @@ ARG PHP_MAJOR_VERSION=7.3
 ARG PHP_MOD=fpm
 ARG INSTALL_XLSWRITER=false
 
+# Debian EOL releases (buster / bullseye) have been moved to archive.debian.org.
+# deb.debian.org still advertises those suites, so apt resolves package versions
+# from the index but the matching .deb files are gone from the pool:
+#   Err:1 ... bullseye-security/main amd64 libicu67 amd64 67.1-7+deb11u1
+#     404  Not Found
+# e.g. PHP 8.0 is built on bullseye, so its build fails with the error above.
+# Point archived suites at the archive, which still serves the complete pool.
+RUN set -xe \
+    && . /etc/os-release \
+    && case "${VERSION_CODENAME}" in \
+         jessie|stretch|buster|bullseye) \
+           for f in /etc/apt/sources.list /etc/apt/sources.list.d/*; do \
+             [ -f "${f}" ] || continue; \
+             sed -i -E 's#https?://(deb|security)\.debian\.org#http://archive.debian.org#g' "${f}"; \
+           done; \
+           ;; \
+       esac
+
 RUN set -xe \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
