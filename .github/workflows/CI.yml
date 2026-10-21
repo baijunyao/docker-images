@@ -15,24 +15,10 @@ jobs:
       busybox: ${{ steps.filter.outputs.busybox }}
       cert_manager: ${{ steps.filter.outputs.cert_manager }}
       certimate: ${{ steps.filter.outputs.certimate }}
-      elasticsearch: ${{ steps.filter.outputs.elasticsearch }}
-      fluentd: ${{ steps.filter.outputs.fluentd }}
-      grafana: ${{ steps.filter.outputs.grafana }}
-      kibana: ${{ steps.filter.outputs.kibana }}
-      mysql_5_6: ${{ steps.filter.outputs.mysql_5_6 }}
-      mysql_5_7: ${{ steps.filter.outputs.mysql_5_7 }}
-      mysql_8_0: ${{ steps.filter.outputs.mysql_8_0 }}
-      mysql_client: ${{ steps.filter.outputs.mysql_client }}
-      nginx: ${{ steps.filter.outputs.nginx }}
       node_exporter: ${{ steps.filter.outputs.node_exporter }}
       ossutil: ${{ steps.filter.outputs.ossutil }}
       php: ${{ steps.filter.outputs.php }}
-      php_nginx: ${{ steps.filter.outputs.php_nginx }}
       pnpm: ${{ steps.filter.outputs.pnpm }}
-      prometheus: ${{ steps.filter.outputs.prometheus }}
-      redis: ${{ steps.filter.outputs.redis }}
-      ubuntu_bionic: ${{ steps.filter.outputs.ubuntu_bionic }}
-      ubuntu_focal: ${{ steps.filter.outputs.ubuntu_focal }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -53,75 +39,14 @@ jobs:
               - '.github/workflows/CI.yml'
             certimate:
               - '.github/workflows/CI.yml'
-            elasticsearch:
-              - 'elasticsearch/**'
-            fluentd:
-              - 'fluentd/**'
-            grafana:
-              - 'grafana/**'
-            kibana:
-              - 'kibana/**'
-            mysql_5_6:
-              - 'mysql/Dockerfile'
-              - 'mysql/5.6/**'
-            mysql_5_7:
-              - 'mysql/Dockerfile'
-              - 'mysql/5.7/**'
-            mysql_8_0:
-              - 'mysql/Dockerfile'
-              - 'mysql/8.0/**'
-            mysql_client:
-              - 'mysql-client/**'
-            nginx:
-              - 'nginx/**'
             node_exporter:
               - 'node-exporter/**'
             ossutil:
               - 'ossutil/**'
             php:
               - 'php/**'
-            php_nginx:
-              - 'php-nginx/**'
             pnpm:
               - 'pnpm/**'
-            prometheus:
-              - 'prometheus/**'
-            redis:
-              - 'redis/**'
-            ubuntu_bionic:
-              - 'ubuntu/**'
-            ubuntu_focal:
-              - 'ubuntu/**'
-
-  ubuntu_bionic:
-    name: Ubuntu Bionic
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.ubuntu_bionic == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh ubuntu/Dockerfile ubuntu baijunyao/ubuntu:bionic --build-arg UBUNTU_VERSION=bionic
-
-  ubuntu_focal:
-    name: Ubuntu Focal
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.ubuntu_focal == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh ubuntu/Dockerfile ubuntu baijunyao/ubuntu:focal --build-arg UBUNTU_VERSION=focal
 
   busybox:
     name: BusyBox
@@ -143,7 +68,7 @@ jobs:
     if: needs.changes.outputs.all == 'true' || needs.changes.outputs.alpine == 'true'
     strategy:
       matrix:
-        version: [ "3.12", "3.23" ]
+        version: [ "3.23" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -155,108 +80,12 @@ jobs:
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - run: .github/scripts/build-and-push.sh alpine/Dockerfile alpine baijunyao/alpine:${{ matrix.version }} --build-arg ALPINE_VERSION=${{ matrix.version }}
 
-  mysql-client:
-    name: MySQL Client
-    needs: [changes, alpine]
-    if: >
-      always() &&
-      needs.alpine.result != 'failure' &&
-      needs.alpine.result != 'cancelled' &&
-      (
-        needs.changes.outputs.all == 'true' ||
-        needs.changes.outputs.alpine == 'true' ||
-        needs.changes.outputs.mysql_client == 'true'
-      )
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh mysql-client/Dockerfile mysql-client baijunyao/mysql-client:1.1
-
-  nginx:
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.nginx == 'true'
-    strategy:
-      matrix:
-        version: [ "1.19", "1.29" ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh nginx/Dockerfile nginx baijunyao/nginx:${{ matrix.version }} --build-arg NGINX_MAJOR_VERSION=${{ matrix.version }}
-
-  mysql_8_0:
-    name: MySQL 8.0
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.mysql_8_0 == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:8.0-local --build-arg MYSQL_VERSION=8.0 --build-arg MYSQL_ENV=local
-      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:8.0-production --build-arg MYSQL_VERSION=8.0 --build-arg MYSQL_ENV=production
-
-  mysql_5_7:
-    name: MySQL 5.7
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.mysql_5_7 == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:5.7-local --build-arg MYSQL_VERSION=5.7 --build-arg MYSQL_ENV=local
-        env:
-          DOCKER_PLATFORMS: linux/amd64
-      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:5.7-production --build-arg MYSQL_VERSION=5.7 --build-arg MYSQL_ENV=production
-        env:
-          DOCKER_PLATFORMS: linux/amd64
-
-  mysql_5_6:
-    name: MySQL 5.6
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.mysql_5_6 == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:5.6-local --build-arg MYSQL_VERSION=5.6 --build-arg MYSQL_ENV=local
-        env:
-          DOCKER_PLATFORMS: linux/amd64
-      - run: .github/scripts/build-and-push.sh mysql/Dockerfile mysql baijunyao/mysql:5.6-production --build-arg MYSQL_VERSION=5.6 --build-arg MYSQL_ENV=production
-        env:
-          DOCKER_PLATFORMS: linux/amd64
-
   php:
     needs: changes
     if: needs.changes.outputs.all == 'true' || needs.changes.outputs.php == 'true'
     strategy:
       matrix:
-        version: [ "7.3", "7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5" ]
+        version: [ "8.2", "8.3", "8.4", "8.5" ]
         mod: [ fpm, cli ]
         target: [ local, production ]
     runs-on: ubuntu-latest
@@ -269,8 +98,6 @@ jobs:
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - run: .github/scripts/build-and-push.sh php/Dockerfile php baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }} --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --target ${{ matrix.target }}
-        env:
-          DOCKER_PLATFORMS: ${{ matrix.version == '7.3' && 'linux/amd64' || env.DOCKER_PLATFORMS }}
 
   php_xlswriter:
     name: PHP with xlswriter
@@ -278,7 +105,7 @@ jobs:
     if: needs.changes.outputs.all == 'true' || needs.changes.outputs.php == 'true'
     strategy:
       matrix:
-        version: [ "8.1", "8.2", "8.5" ]
+        version: [ "8.2", "8.5" ]
         mod: [ fpm, cli ]
         target: [ local, production ]
     runs-on: ubuntu-latest
@@ -291,103 +118,6 @@ jobs:
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - run: .github/scripts/build-and-push.sh php/Dockerfile php baijunyao/php:${{ matrix.version }}-${{ matrix.mod }}-${{ matrix.target }}-xlswriter --build-arg PHP_MAJOR_VERSION=${{ matrix.version }} --build-arg PHP_MOD=${{ matrix.mod }} --build-arg INSTALL_XLSWRITER=true --target ${{ matrix.target }}
-
-  php_nginx:
-    name: PHP with NGINX
-    needs: [changes, php]
-    if: >
-      always() &&
-      needs.php.result != 'failure' &&
-      needs.php.result != 'cancelled' &&
-      (
-        needs.changes.outputs.all == 'true' ||
-        needs.changes.outputs.php == 'true' ||
-        needs.changes.outputs.php_nginx == 'true'
-      )
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh php-nginx/Dockerfile php-nginx baijunyao/php-nginx
-
-  redis:
-    name: Redis
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.redis == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh redis/Dockerfile redis baijunyao/redis:6.0 --build-arg REDIS_VERSION=6.0
-
-  elasticsearch:
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.elasticsearch == 'true'
-    strategy:
-      matrix:
-        include:
-          - version: "7.4.1"
-            platforms: linux/amd64
-          - version: "7.6.2"
-            platforms: linux/amd64
-          - version: "7.10.1"
-            platforms: linux/amd64,linux/arm64
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh elasticsearch/Dockerfile elasticsearch baijunyao/elasticsearch:${{ matrix.version }} --build-arg ELASTICSEARCH_VERSION=${{ matrix.version }}
-        env:
-          DOCKER_PLATFORMS: ${{ matrix.platforms }}
-
-  kibana:
-    name: Kibana
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.kibana == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh kibana/Dockerfile kibana baijunyao/kibana:7.10.1 --build-arg KIBANA_VERSION=7.10.1
-        env:
-          DOCKER_PLATFORMS: linux/amd64
-
-  fluentd:
-    name: Fluentd
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.fluentd == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh fluentd/Dockerfile fluentd baijunyao/fluentd:1.11 --build-arg FLUENTD_VERSION=1.11
-        env:
-          DOCKER_PLATFORMS: linux/amd64
 
   ossutil:
     needs: [changes, alpine]
@@ -415,21 +145,6 @@ jobs:
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - run: .github/scripts/build-and-push.sh ossutil/Dockerfile ossutil baijunyao/ossutil:${{ matrix.version }} --build-arg OSSUTIL_VERSION=${{ matrix.version }} --build-arg ALPINE_VERSION=${{ matrix.alpine_version }}
 
-  prometheus:
-    name: Prometheus
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.prometheus == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh prometheus/Dockerfile prometheus baijunyao/prometheus:v2.23.0 --build-arg PROMETHEUS_VERSION=2.23.0
-
   node_exporter:
     name: Node exporter
     needs: changes
@@ -444,21 +159,6 @@ jobs:
           aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
           aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
       - run: .github/scripts/build-and-push.sh node-exporter/Dockerfile node-exporter baijunyao/node-exporter:v1.1.2 --build-arg NODE_EXPORTER_VERSION=1.1.2
-
-  grafana:
-    name: Grafana
-    needs: changes
-    if: needs.changes.outputs.all == 'true' || needs.changes.outputs.grafana == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-setup
-        with:
-          dockerhub-username: baijunyao
-          dockerhub-password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          aliyun-username: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_USERNAME }}
-          aliyun-password: ${{ secrets.ALIYUN_CONTAINER_REGISTRY_PASSWORD }}
-      - run: .github/scripts/build-and-push.sh grafana/Dockerfile grafana baijunyao/grafana:7.3.4 --build-arg GRAFANA_VERSION=7.3.4
 
   pnpm:
     needs: changes
@@ -482,11 +182,9 @@ jobs:
     if: needs.changes.outputs.all == 'true' || needs.changes.outputs.cert_manager == 'true'
     strategy:
       matrix:
-        version: [ "1.10.2", "1.21.2" ]
+        version: [ "1.21.2" ]
         repository: [ "cert-manager-controller", "cert-manager-webhook", "cert-manager-cainjector", "cert-manager-acmesolver" ]
         include:
-          - version: "1.10.2"
-            repository: cert-manager-ctl
           - version: "1.21.2"
             repository: cert-manager-startupapicheck
     runs-on: ubuntu-latest

@@ -1,7 +1,8 @@
 # Docker Images
 Some Dockerfile
 
-## PHP 7.1 ~ 8.5
+## PHP 8.2 ~ 8.5
+Default build version: 8.5
 DockerHub: https://hub.docker.com/r/baijunyao/php
 
 ### Local
@@ -12,12 +13,12 @@ Feature
 
 Pull PHP FPM image, e.g.
 ```bash
-docker pull baijunyao/php:8.0-fpm-local
+docker pull baijunyao/php:8.2-fpm-local
 ```
 
 Pull PHP CLI image, e.g.
 ```bash
-docker pull baijunyao/php:8.0-cli-local
+docker pull baijunyao/php:8.2-cli-local
 ```
 
 ### Production
@@ -28,64 +29,15 @@ Feature
 
 Pull PHP FPM image, e.g.
 ```bash
-docker pull baijunyao/php:8.0-fpm-production
+docker pull baijunyao/php:8.2-fpm-production
 ```
 
 Pull PHP CLI image, e.g.
 ```bash
-docker pull baijunyao/php:8.0-cli-production
+docker pull baijunyao/php:8.2-cli-production
 ```
 
-## MySQL 8.0
-DockerHub: https://hub.docker.com/r/baijunyao/mysql
-### Local
-Feature
-- Add `default-authentication-plugin=mysql_native_password` and `bind-address=0.0.0.0` to my.cnf
-
-Pull image
-```bash
-docker pull baijunyao/mysql:8.0-local
-```
-
-### Production
-Feature
-- Add `default-authentication-plugin=mysql_native_password` to my.cnf
-
-Pull image
-```bash
-docker pull baijunyao/mysql:8.0-production
-```
-# MySQL Client
-DockerHub: https://hub.docker.com/r/baijunyao/mysql-client
-
-Pull image
-```bash
-docker pull baijunyao/mysql-client:1.0
-```
-
-## NGINX 1.7、1.19、1.29
-DockerHub: https://hub.docker.com/r/baijunyao/nginx
-
-Feature
-- Remove /etc/nginx/conf.d/default.conf
-
-Pull image
-```bash
-docker pull baijunyao/nginx:1.29
-```
-
-## Elasticsearch 7.4、7.6
-DockerHub: https://hub.docker.com/r/baijunyao/elasticsearch
-
-Feature
-- Install elasticsearch-analysis-ik
-
-Pull image
-```bash
-docker pull baijunyao/elasticsearch:7.4
-docker pull baijunyao/elasticsearch:7.6
-```
-## Alpine 3.12、3.23
+## Alpine 3.23
 DockerHub: https://hub.docker.com/r/baijunyao/alpine
 
 Feature
@@ -94,7 +46,6 @@ Feature
 
 Pull image
 ```bash
-docker pull baijunyao/alpine:3.12
 docker pull baijunyao/alpine:3.23
 ```
 
@@ -111,18 +62,8 @@ docker pull baijunyao/ossutil:1.7.0
 docker pull baijunyao/ossutil:2.3.0
 ```
 
-## Fluentd 1.11
-DockerHub: https://hub.docker.com/r/baijunyao/fluentd
-
-Feature
-- Install fluent-plugin-parser-cri
-
-Pull image
-```bash
-docker pull baijunyao/fluentd:1.11
-```
-
 ## pnpm 10
+Base image: Node.js 24 (Alpine)
 DockerHub: https://hub.docker.com/r/baijunyao/pnpm
 
 Feature

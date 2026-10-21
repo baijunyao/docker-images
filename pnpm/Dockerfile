@@ -1,6 +1,6 @@
 ARG PNPM_VERSION=10
 
-FROM node:20-alpine
+FROM node:24-alpine
 
 ARG PNPM_VERSION=10
 

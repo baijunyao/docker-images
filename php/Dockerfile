@@ -1,31 +1,13 @@
-ARG PHP_MAJOR_VERSION=7.3
+ARG PHP_MAJOR_VERSION=8.5
 ARG PHP_MOD=fpm
 ARG INSTALL_XLSWRITER=false
 
 FROM php:${PHP_MAJOR_VERSION}-${PHP_MOD} AS base
 
 # Due to scope issues, it is necessary to redefine here. https://docs.docker.com/engine/reference/builder/#scope
-ARG PHP_MAJOR_VERSION=7.3
+ARG PHP_MAJOR_VERSION=8.5
 ARG PHP_MOD=fpm
 ARG INSTALL_XLSWRITER=false
-
-# Debian EOL releases (buster / bullseye) have been moved to archive.debian.org.
-# deb.debian.org still advertises those suites, so apt resolves package versions
-# from the index but the matching .deb files are gone from the pool:
-#   Err:1 ... bullseye-security/main amd64 libicu67 amd64 67.1-7+deb11u1
-#     404  Not Found
-# e.g. PHP 8.0 is built on bullseye, so its build fails with the error above.
-# Point archived suites at the archive, which still serves the complete pool.
-RUN set -xe \
-    && . /etc/os-release \
-    && case "${VERSION_CODENAME}" in \
-         jessie|stretch|buster|bullseye) \
-           for f in /etc/apt/sources.list /etc/apt/sources.list.d/*; do \
-             [ -f "${f}" ] || continue; \
-             sed -i -E 's#https?://(deb|security)\.debian\.org#http://archive.debian.org#g' "${f}"; \
-           done; \
-           ;; \
-       esac
 
 RUN set -xe \
     && apt-get update \
@@ -36,18 +18,11 @@ RUN set -xe \
         libicu-dev \
         libzip-dev \
         unzip \
-    && if [ "${PHP_MAJOR_VERSION}" = "7.3" ]; then \
-        docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/; \
-    else \
-        # https://github.com/docker-library/php/issues/912#issuecomment-559918036  \
-        # https://github.com/php/php-src/blob/PHP-7.4/UPGRADING#L755-L764 \
-        docker-php-ext-configure gd --with-freetype --with-jpeg; \
-    fi \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl gd pdo_mysql zip exif pcntl \
     && case "${PHP_MAJOR_VERSION}" in \
-        7.3) pecl install -o -f redis-6.0.2 ;; \
-        7.4|8.0|8.1|8.2|8.3|8.4) pecl install -o -f redis-6.2.0 ;; \
+        8.2|8.3|8.4) pecl install -o -f redis-6.2.0 ;; \
         8.5) pecl install -o -f redis-6.3.0 ;; \
         *) echo "Unsupported PHP version (${PHP_MAJOR_VERSION}) for redis extension" && exit 1 ;; \
        esac \
@@ -68,12 +43,11 @@ WORKDIR /app
 FROM base AS local
 
 # Due to scope issues, it is necessary to redefine here. https://docs.docker.com/engine/reference/builder/#scope
-ARG PHP_MAJOR_VERSION=7.3
+ARG PHP_MAJOR_VERSION=8.5
 ARG PHP_MOD=fpm
 
 RUN case "${PHP_MAJOR_VERSION}" in \
-        7.3|7.4) pecl install -o -f xdebug-3.1.6 ;; \
-        8.0|8.1|8.2|8.3|8.4) pecl install -o -f xdebug-3.4.2 ;; \
+        8.2|8.3|8.4) pecl install -o -f xdebug-3.4.2 ;; \
         8.5) pecl install -o -f xdebug-3.5.1 ;; \
         *) echo "Unsupported PHP version (${PHP_MAJOR_VERSION}) for xdebug extension" && exit 1 ;; \
        esac \
@@ -86,7 +60,7 @@ COPY conf/php-custom-develop.ini /usr/local/etc/php/conf.d/php-custom.ini
 FROM base AS production
 
 # Due to scope issues, it is necessary to redefine here. https://docs.docker.com/engine/reference/builder/#scope
-ARG PHP_MAJOR_VERSION=7.3
+ARG PHP_MAJOR_VERSION=8.5
 ARG PHP_MOD=fpm
 
 RUN if [ "${PHP_MAJOR_VERSION}" != "8.5" ]; then \
