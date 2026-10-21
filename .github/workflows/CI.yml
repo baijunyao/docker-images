@@ -278,7 +278,7 @@ jobs:
     if: needs.changes.outputs.all == 'true' || needs.changes.outputs.php == 'true'
     strategy:
       matrix:
-        version: [ "8.1", "8.5" ]
+        version: [ "8.1", "8.2", "8.5" ]
         mod: [ fpm, cli ]
         target: [ local, production ]
     runs-on: ubuntu-latest
